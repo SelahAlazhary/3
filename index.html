@@ -59,6 +59,45 @@
             color: var(--text-primary);
             min-height: 100vh;
             padding: 20px;
+            transition: background 0.3s ease;
+        }
+
+        /* ===== خلفية بيضاء لصفحات الأقسام والمواد ===== */
+        body.sections-view,
+        body.subjects-view {
+            background: #FFFFFF !important;
+        }
+
+        #sectionsSection,
+        #subjectsSection {
+            background-color: #FFFFFF;
+            padding: 25px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+        }
+
+        #sectionsSection .section-card,
+        #subjectsSection .subject-card {
+            background: #FFFFFF;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f0f0f0;
+        }
+
+        #sectionsSection .page-title,
+        #subjectsSection .page-title {
+            color: #333333;
+            text-shadow: none;
+            font-weight: 700;
+        }
+
+        #sectionsSection .section-card h3,
+        #subjectsSection .subject-card h4 {
+            color: #333333;
+        }
+
+        #sectionsSection .section-card p,
+        #subjectsSection .subject-card p {
+            color: #666666;
         }
 
         .container {
@@ -678,6 +717,26 @@
             color: var(--text-secondary);
         }
 
+        .retry-btn {
+            margin-top: 15px;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 30px;
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+
         /* ===== شارة الأمان ===== */
         .secure-badge {
             position: fixed;
@@ -886,6 +945,7 @@
         let score = 0;
         let quizStartTime;
         let isDarkMode = localStorage.getItem('darkMode') === 'true';
+        let dataLoadPromise = null;
 
         // ===== عناصر DOM =====
         const elements = {
@@ -920,97 +980,100 @@
             yearCards: document.querySelectorAll('.year-card')
         };
 
-        // ===== تهيئة التطبيق =====
-        function init() {
-            // تطبيق الوضع الليلي
-            if (isDarkMode) {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                elements.themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            }
-
-            // تحميل البيانات
-            loadSections();
-            loadSubjects();
-            loadAd();
-
-            // التحقق من رابط المشاركة
-            checkSharedLink();
-
-            // إضافة المستمعين
-            addEventListeners();
+        // ===== دوال تحميل البيانات بشكل متزامن =====
+        function loadSectionsAsync() {
+            return new Promise((resolve) => {
+                database.ref('sections').once('value', (snapshot) => {
+                    sections = [];
+                    snapshot.forEach(child => {
+                        sections.push({
+                            id: child.key,
+                            ...child.val()
+                        });
+                    });
+                    resolve(sections);
+                });
+            });
         }
 
-        // ===== التحقق من رابط المشاركة =====
-        function checkSharedLink() {
+        function loadSubjectsAsync() {
+            return new Promise((resolve) => {
+                database.ref('subjects').once('value', (snapshot) => {
+                    subjects = [];
+                    snapshot.forEach(child => {
+                        subjects.push({
+                            id: child.key,
+                            ...child.val()
+                        });
+                    });
+                    resolve(subjects);
+                });
+            });
+        }
+
+        // ===== تحميل جميع البيانات مرة واحدة =====
+        async function loadAllData() {
+            if (!dataLoadPromise) {
+                dataLoadPromise = Promise.all([
+                    loadSectionsAsync(),
+                    loadSubjectsAsync()
+                ]);
+            }
+            return dataLoadPromise;
+        }
+
+        // ===== التحقق من رابط المشاركة (مُحدّث) =====
+        async function checkSharedLink() {
             const params = new URLSearchParams(window.location.search);
             const sectionId = params.get('section');
 
             if (sectionId) {
                 showLoading();
-                setTimeout(() => {
-                    openSharedSection(sectionId);
-                }, 500);
-            }
-        }
-
-        // ===== فتح قسم من رابط مشاركة =====
-        function openSharedSection(sectionId) {
-            database.ref('sections').child(sectionId).once('value', (snapshot) => {
-                hideLoading();
-                if (snapshot.exists()) {
-                    currentSection = sectionId;
+                
+                try {
+                    // تحميل جميع البيانات أولاً
+                    await loadAllData();
+                    
+                    // إخفاء الصفحة الرئيسية
                     elements.yearsSection.style.display = 'none';
-                    elements.sectionsSection.style.display = 'none';
-                    elements.subjectsSection.style.display = 'block';
-                    elements.backBtn.style.display = 'flex';
-                    loadSubjectsForSection(sectionId);
-                } else {
-                    showNotification('القسم غير موجود');
+                    
+                    // فتح القسم
+                    await openSharedSection(sectionId);
+                } catch (error) {
+                    console.error('خطأ في تحميل البيانات:', error);
+                    hideLoading();
+                    showNotification('حدث خطأ في تحميل البيانات');
+                    elements.yearsSection.style.display = 'block';
                 }
-            });
-        }
-
-        // ===== مشاركة الصفحة =====
-        function sharePage() {
-            const url = window.location.href;
-            if (navigator.share) {
-                navigator.share({
-                    title: document.title,
-                    url: url
-                });
-            } else {
-                copyToClipboard(url);
             }
         }
 
-        // ===== مشاركة قسم =====
-        function shareSection(sectionId, sectionName) {
-            const url = `${window.location.origin}${window.location.pathname}?section=${sectionId}`;
-            if (navigator.share) {
-                navigator.share({
-                    title: `قسم ${sectionName}`,
-                    url: url
-                });
+        // ===== فتح قسم من رابط مشاركة (مُحدّث) =====
+        async function openSharedSection(sectionId) {
+            const section = sections.find(s => s.id === sectionId);
+            
+            if (section) {
+                currentSection = sectionId;
+                currentYear = section.grades && section.grades[0] || 'secondary3';
+                
+                // تحديث الواجهة
+                elements.yearsSection.style.display = 'none';
+                elements.sectionsSection.style.display = 'none';
+                elements.subjectsSection.style.display = 'block';
+                elements.backBtn.style.display = 'flex';
+                
+                // إضافة كلاس للخلفية البيضاء
+                document.body.classList.add('subjects-view');
+                
+                // تحميل المواد
+                await loadSubjectsForSection(sectionId);
+                hideLoading();
             } else {
-                copyToClipboard(url);
-                showNotification(`تم نسخ رابط قسم ${sectionName}`);
+                hideLoading();
+                showNotification('القسم غير موجود');
+                elements.yearsSection.style.display = 'block';
+                document.body.classList.remove('sections-view', 'subjects-view');
             }
-        }
-
-        // ===== نسخ النص =====
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).catch(() => {
-                prompt('انسخ الرابط:', text);
-            });
-        }
-
-        // ===== عرض الإشعار =====
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.className = 'copy-notification';
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            setTimeout(() => notification.remove(), 3000);
         }
 
         // ===== تحميل الأقسام =====
@@ -1044,12 +1107,19 @@
             const yearSections = sections.filter(s => s.grades && s.grades.includes(year));
             elements.sectionsContainer.innerHTML = '';
 
+            // إضافة كلاس للخلفية البيضاء
+            document.body.classList.add('sections-view');
+            document.body.classList.remove('subjects-view');
+
             if (yearSections.length === 0) {
                 elements.sectionsContainer.innerHTML = `
                     <div class="no-data">
                         <i class="fas fa-info-circle"></i>
                         <h3>لا توجد أقسام</h3>
                         <p>لم يتم إضافة أقسام بعد</p>
+                        <button class="retry-btn" onclick="goBackToYears()">
+                            <i class="fas fa-arrow-right"></i> العودة للصفوف
+                        </button>
                     </div>
                 `;
                 return;
@@ -1075,30 +1145,45 @@
             });
         }
 
+        // ===== العودة للصفوف =====
+        window.goBackToYears = function() {
+            elements.sectionsSection.style.display = 'none';
+            elements.yearsSection.style.display = 'block';
+            elements.backBtn.style.display = 'none';
+            document.body.classList.remove('sections-view', 'subjects-view');
+        };
+
         // ===== اختيار قسم =====
         window.selectSection = function(sectionId) {
             currentSection = sectionId;
             elements.sectionsSection.style.display = 'none';
             elements.subjectsSection.style.display = 'block';
+            document.body.classList.add('subjects-view');
+            document.body.classList.remove('sections-view');
             loadSubjectsForSection(sectionId);
         };
 
-        // ===== تحميل المواد للقسم =====
-        function loadSubjectsForSection(sectionId) {
+        // ===== تحميل المواد للقسم (مُحدّث) =====
+        async function loadSubjectsForSection(sectionId) {
+            // فلترة المواد الخاصة بالقسم
             const sectionSubjects = subjects.filter(s => s.sectionId === sectionId);
-            elements.subjectsContainer.innerHTML = '';
-
+            
             if (sectionSubjects.length === 0) {
                 elements.subjectsContainer.innerHTML = `
                     <div class="no-data">
                         <i class="fas fa-info-circle"></i>
                         <h3>لا توجد مواد</h3>
                         <p>لم يتم إضافة مواد لهذا القسم بعد</p>
+                        <button class="retry-btn" onclick="goBackToSections()">
+                            <i class="fas fa-arrow-right"></i> العودة للأقسام
+                        </button>
                     </div>
                 `;
                 return;
             }
 
+            // عرض المواد
+            elements.subjectsContainer.innerHTML = '';
             sectionSubjects.forEach(subject => {
                 const card = document.createElement('div');
                 card.className = 'subject-card';
@@ -1111,6 +1196,15 @@
             });
         }
 
+        // ===== العودة للأقسام =====
+        window.goBackToSections = function() {
+            elements.subjectsSection.style.display = 'none';
+            elements.sectionsSection.style.display = 'block';
+            document.body.classList.add('sections-view');
+            document.body.classList.remove('subjects-view');
+            loadSectionsForYear(currentYear);
+        };
+
         // ===== اختيار مادة =====
         function selectSubject(subjectId) {
             currentSubject = subjectId;
@@ -1119,6 +1213,7 @@
                 elements.quizTitle.textContent = `اختبار - ${subject.name}`;
             }
             elements.subjectsSection.style.display = 'none';
+            document.body.classList.remove('subjects-view');
             loadQuestions(subjectId);
         }
 
@@ -1136,6 +1231,7 @@
                 if (questions.length === 0) {
                     showNotification('لا توجد أسئلة لهذه المادة');
                     elements.subjectsSection.style.display = 'block';
+                    document.body.classList.add('subjects-view');
                     return;
                 }
 
@@ -1277,21 +1373,29 @@
             startQuiz();
         });
 
-        // ===== الرجوع =====
+        // ===== الرجوع (مُحدّث) =====
         elements.backBtn.addEventListener('click', () => {
             if (elements.subjectsSection.style.display === 'block') {
                 elements.subjectsSection.style.display = 'none';
                 elements.sectionsSection.style.display = 'block';
+                document.body.classList.add('sections-view');
+                document.body.classList.remove('subjects-view');
+                loadSectionsForYear(currentYear);
             } else if (elements.sectionsSection.style.display === 'block') {
                 elements.sectionsSection.style.display = 'none';
                 elements.yearsSection.style.display = 'block';
                 elements.backBtn.style.display = 'none';
+                document.body.classList.remove('sections-view', 'subjects-view');
             } else if (elements.quizContainer.style.display === 'block') {
                 elements.quizContainer.style.display = 'none';
                 elements.subjectsSection.style.display = 'block';
+                document.body.classList.add('subjects-view');
+                loadSubjectsForSection(currentSection);
             } else if (elements.resultsContainer.style.display === 'block') {
                 elements.resultsContainer.style.display = 'none';
                 elements.subjectsSection.style.display = 'block';
+                document.body.classList.add('subjects-view');
+                loadSubjectsForSection(currentSection);
             }
         });
 
@@ -1316,6 +1420,54 @@
 
         // ===== مشاركة الصفحة =====
         elements.sharePageBtn.addEventListener('click', sharePage);
+
+        function sharePage() {
+            const url = window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    url: url
+                });
+            } else {
+                copyToClipboard(url);
+                showNotification('تم نسخ رابط الصفحة');
+            }
+        }
+
+        // ===== مشاركة قسم =====
+        window.shareSection = function(sectionId, sectionName) {
+            const url = `${window.location.origin}${window.location.pathname}?section=${sectionId}`;
+            if (navigator.share) {
+                navigator.share({
+                    title: `قسم ${sectionName}`,
+                    url: url
+                });
+            } else {
+                copyToClipboard(url);
+                showNotification(`تم نسخ رابط قسم ${sectionName}`);
+            }
+        };
+
+        // ===== نسخ النص =====
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            });
+        }
+
+        // ===== عرض الإشعار =====
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'copy-notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
 
         // ===== إغلاق الإعلان =====
         elements.adClose.addEventListener('click', () => {
@@ -1363,6 +1515,30 @@
         // ===== إخفاء التحميل =====
         function hideLoading() {
             elements.loadingOverlay.style.display = 'none';
+        }
+
+        // ===== تهيئة التطبيق (مُحدّث) =====
+        async function init() {
+            // تطبيق الوضع الليلي
+            if (isDarkMode) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                elements.themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+
+            // إضافة المستمعين
+            addEventListeners();
+
+            // تحميل الإعلان
+            loadAd();
+
+            // التحقق من رابط المشاركة أولاً (مع تحميل البيانات إذا لزم الأمر)
+            await checkSharedLink();
+
+            // إذا لم يكن هناك رابط مشاركة، حمل البيانات في الخلفية
+            if (!window.location.search.includes('section')) {
+                loadSections();
+                loadSubjects();
+            }
         }
 
         // ===== بدء التطبيق =====
