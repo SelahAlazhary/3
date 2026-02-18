@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* تصميم حديث محسن - (المحافظة على كل التصميم الأصلي) */
+        /* جميع الأنماط CSS كما هي - لم يتم تغييرها */
         :root {
             --primary: #4361ee;
             --primary-light: #4895ef;
@@ -699,7 +699,7 @@
             box-shadow: var(--shadow-lg);
             transition: var(--transition);
             z-index: 100;
-            display: none !important; /* تم إخفاؤه */
+            display: none !important;
         }
 
         /* Loading Overlay - تصميم علمي حديث */
@@ -1407,7 +1407,6 @@
         percentageDisplay: document.getElementById('percentage'),
         timeTakenDisplay: document.getElementById('time-taken'),
         feedbackDisplay: document.getElementById('feedback'),
-        logoContainer: document.getElementById('logo-container'),
         quizLoading: document.getElementById('quiz-loading'),
         categoryFilter: document.getElementById('category-filter'),
         categorySelect: document.getElementById('category-select'),
@@ -1469,10 +1468,11 @@
             const sectionId = urlParams.get('section');
             
             if (sectionId) {
+                console.log('تم العثور على section في الرابط:', sectionId);
                 // تأخير قليلاً حتى يتم تحميل البيانات
                 setTimeout(() => {
                     loadSectionFromUrl(sectionId);
-                }, 1000);
+                }, 1500);
             }
         } catch (error) {
             console.error('خطأ في التحقق من URL:', error);
@@ -1482,6 +1482,8 @@
     // تحميل القسم من الرابط
     function loadSectionFromUrl(sectionId) {
         try {
+            console.log('جاري تحميل القسم من الرابط:', sectionId);
+            
             // إخفاء اختيار الصف
             elements.yearSelectionContainer.style.display = 'none';
             
@@ -1490,6 +1492,7 @@
             sectionRef.once('value', (snapshot) => {
                 if (snapshot.exists()) {
                     const section = snapshot.val();
+                    console.log('تم العثور على القسم:', section);
                     
                     // البحث عن الصف المرتبط بالقسم
                     if (section.grades && section.grades.length > 0) {
@@ -1501,15 +1504,20 @@
                         
                         // تحميل الأقسام للصف المختار مع تحديد القسم المطلوب
                         loadSectionsForYear(selectedYear, sectionId);
+                    } else {
+                        showError('القسم المطلوب غير مرتبط بأي صف');
                     }
                 } else {
+                    console.error('القسم المطلوب غير موجود:', sectionId);
                     showError('القسم المطلوب غير موجود');
                 }
             }, (error) => {
                 console.error('خطأ في تحميل القسم من الرابط:', error);
+                showError('حدث خطأ في تحميل القسم من الرابط');
             });
         } catch (error) {
             console.error('خطأ في تحميل القسم من الرابط:', error);
+            showError('حدث خطأ في تحميل القسم من الرابط');
         }
     }
     
@@ -1536,6 +1544,8 @@
                 sectionId: sectionId,
                 sectionName: sectionName,
                 timestamp: new Date().toISOString()
+            }).catch(error => {
+                console.error('خطأ في حفظ المشاركة:', error);
             });
         } catch (error) {
             console.error('خطأ في مشاركة القسم:', error);
@@ -1578,7 +1588,9 @@
             setTimeout(() => {
                 notification.style.animation = 'slideUp 0.3s ease';
                 setTimeout(() => {
-                    document.body.removeChild(notification);
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
                 }, 300);
             }, 3000);
         } catch (error) {
@@ -1725,6 +1737,7 @@
                     section.id = childSnapshot.key;
                     sections.push(section);
                 });
+                console.log('تم تحميل الأقسام:', sections.length);
             }, (error) => {
                 console.error('خطأ في تحميل الأقسام:', error);
             });
@@ -1744,6 +1757,7 @@
                     subject.id = childSnapshot.key;
                     subjects.push(subject);
                 });
+                console.log('تم تحميل المواد:', subjects.length);
             }, (error) => {
                 console.error('خطأ في تحميل المواد:', error);
             });
@@ -1763,6 +1777,7 @@
                     lesson.id = childSnapshot.key;
                     lessons.push(lesson);
                 });
+                console.log('تم تحميل الدروس:', lessons.length);
             }, (error) => {
                 console.error('خطأ في تحميل الدروس:', error);
             });
@@ -1782,6 +1797,7 @@
                     sublesson.id = childSnapshot.key;
                     sublessons.push(sublesson);
                 });
+                console.log('تم تحميل الأقسام الفرعية:', sublessons.length);
             }, (error) => {
                 console.error('خطأ في تحميل الأقسام الفرعية:', error);
             });
@@ -1798,6 +1814,8 @@
                 card.addEventListener('click', function() {
                     try {
                         selectedYear = this.dataset.year;
+                        console.log('تم اختيار الصف:', selectedYear);
+                        
                         elements.yearSelectionContainer.style.display = 'none';
                         elements.sectionSelectionContainer.style.display = 'block';
                         
@@ -1862,11 +1880,15 @@
     function loadSectionsForYear(year, highlightSectionId = null) {
         try {
             elements.sectionContainer.innerHTML = '';
+            console.log('تحميل الأقسام للصف:', year);
+            console.log('الأقسام المتاحة:', sections);
             
             // تصفية الأقسام التي تنتمي للصف المختار
             const yearSections = sections.filter(section => 
                 section.grades && section.grades.includes(year)
             );
+            
+            console.log('الأقسام المصفاة:', yearSections.length);
             
             if (yearSections.length > 0) {
                 yearSections.forEach(section => {
@@ -1885,7 +1907,7 @@
                         </div>
                         <i class="${section.icon}"></i>
                         <h3>${section.name}</h3>
-                        <p>${section.description}</p>
+                        <p>${section.description || ''}</p>
                     `;
                     
                     elements.sectionContainer.appendChild(sectionCard);
@@ -1900,7 +1922,10 @@
                             this.classList.add('selected');
                             selectedSection = this.dataset.section;
                             
-                            const sectionName = sections.find(s => s.id === selectedSection)?.name || '';
+                            const sectionObj = sections.find(s => s.id === selectedSection);
+                            const sectionName = sectionObj ? sectionObj.name : '';
+                            console.log('تم اختيار القسم:', sectionName, 'بالمعرف:', selectedSection);
+                            
                             elements.quizTitle.textContent += ` - ${sectionName}`;
                             
                             loadSubjectsForSection(selectedSection);
@@ -1930,10 +1955,10 @@
             } else {
                 // عرض رسالة عدم وجود أقسام
                 elements.sectionContainer.innerHTML = `
-                    <div class="no-questions" style="grid-column: 1 / -1;">
-                        <i class="fas fa-info-circle"></i>
-                        <h3>لا توجد أقسام متاحة</h3>
-                        <p>لم يتم إضافة أقسام لهذا الصف بعد.</p>
+                    <div class="no-questions" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <i class="fas fa-info-circle" style="font-size: 48px; color: var(--primary);"></i>
+                        <h3 style="margin: 20px 0;">لا توجد أقسام متاحة</h3>
+                        <p style="color: var(--text-secondary);">لم يتم إضافة أقسام لهذا الصف بعد.</p>
                     </div>
                 `;
             }
@@ -1947,11 +1972,15 @@
     function loadSubjectsForSection(sectionId) {
         try {
             elements.subjectContainer.innerHTML = '';
+            console.log('تحميل المواد للقسم:', sectionId);
+            console.log('المواد المتاحة:', subjects);
             
             // تصفية المواد التي تنتمي للقسم المختار
             const sectionSubjects = subjects.filter(subject => 
                 subject.sectionId === sectionId
             );
+            
+            console.log('المواد المصفاة:', sectionSubjects.length);
             
             if (sectionSubjects.length > 0) {
                 sectionSubjects.forEach(subject => {
@@ -1959,9 +1988,9 @@
                     subjectCard.className = 'subject-card card-3d';
                     subjectCard.dataset.subject = subject.id;
                     subjectCard.innerHTML = `
-                        <i class="fas ${subject.icon}"></i>
+                        <i class="fas ${subject.icon || 'fa-book'}"></i>
                         <h3>${subject.name}</h3>
-                        <p>${subject.description}</p>
+                        <p>${subject.description || ''}</p>
                     `;
                     
                     subjectCard.addEventListener('click', function() {
@@ -1970,7 +1999,10 @@
                             this.classList.add('selected');
                             selectedSubject = this.dataset.subject;
                             
-                            const subjectName = subjects.find(s => s.id === selectedSubject)?.name || '';
+                            const subjectObj = subjects.find(s => s.id === selectedSubject);
+                            const subjectName = subjectObj ? subjectObj.name : '';
+                            console.log('تم اختيار المادة:', subjectName);
+                            
                             elements.quizTitle.textContent += ` - ${subjectName}`;
                             
                             // عرض الدروس المتاحة لهذه المادة
@@ -1990,10 +2022,10 @@
                 elements.subjectSelectionContainer.style.display = 'block';
             } else {
                 elements.subjectContainer.innerHTML = `
-                    <div class="no-questions" style="grid-column: 1 / -1;">
-                        <i class="fas fa-info-circle"></i>
-                        <h3>لا توجد مواد متاحة</h3>
-                        <p>لم يتم إضافة مواد لهذا القسم بعد.</p>
+                    <div class="no-questions" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <i class="fas fa-info-circle" style="font-size: 48px; color: var(--primary);"></i>
+                        <h3 style="margin: 20px 0;">لا توجد مواد متاحة</h3>
+                        <p style="color: var(--text-secondary);">لم يتم إضافة مواد لهذا القسم بعد.</p>
                     </div>
                 `;
             }
@@ -2007,11 +2039,14 @@
     function loadLessonsForSubject(subjectId) {
         try {
             elements.lessonContainer.innerHTML = '';
+            console.log('تحميل الدروس للمادة:', subjectId);
             
             // تصفية الدروس التي تنتمي للمادة المختارة
             const subjectLessons = lessons.filter(lesson => 
                 lesson.subjectId === subjectId
             );
+            
+            console.log('الدروس المصفاة:', subjectLessons.length);
             
             if (subjectLessons.length > 0) {
                 // فرز الدروس حسب الترتيب
@@ -2022,9 +2057,9 @@
                     lessonCard.className = 'lesson-card card-3d';
                     lessonCard.dataset.lesson = lesson.id;
                     lessonCard.innerHTML = `
-                        <i class="fas ${lesson.icon}"></i>
+                        <i class="fas ${lesson.icon || 'fa-book-open'}"></i>
                         <h3>${lesson.name}</h3>
-                        <p>${lesson.description}</p>
+                        <p>${lesson.description || ''}</p>
                     `;
                     
                     lessonCard.addEventListener('click', function() {
@@ -2033,7 +2068,10 @@
                             this.classList.add('selected');
                             selectedLesson = this.dataset.lesson;
                             
-                            const lessonName = lessons.find(l => l.id === selectedLesson)?.name || '';
+                            const lessonObj = lessons.find(l => l.id === selectedLesson);
+                            const lessonName = lessonObj ? lessonObj.name : '';
+                            console.log('تم اختيار الدرس:', lessonName);
+                            
                             elements.quizTitle.textContent += ` - ${lessonName}`;
                             
                             // عرض الأقسام الفرعية المتاحة لهذا الدرس
@@ -2053,6 +2091,7 @@
                 elements.lessonSelectionContainer.style.display = 'block';
             } else {
                 // إذا لم يكن هناك دروس، انتقل مباشرة إلى الاختبارات
+                console.log('لا توجد دروس، الانتقال مباشرة للاختبارات');
                 setTimeout(() => {
                     elements.subjectSelectionContainer.style.display = 'none';
                     elements.quizContainer.style.display = 'block';
@@ -2069,11 +2108,14 @@
     function loadSublessonsForLesson(lessonId) {
         try {
             elements.sublessonContainer.innerHTML = '';
+            console.log('تحميل الأقسام الفرعية للدرس:', lessonId);
             
             // تصفية الأقسام الفرعية التي تنتمي للدرس المختار
             const lessonSublessons = sublessons.filter(sublesson => 
                 sublesson.lessonId === lessonId
             );
+            
+            console.log('الأقسام الفرعية المصفاة:', lessonSublessons.length);
             
             if (lessonSublessons.length > 0) {
                 // فرز الأقسام الفرعية حسب الترتيب
@@ -2084,9 +2126,9 @@
                     sublessonCard.className = 'sublesson-card card-3d';
                     sublessonCard.dataset.sublesson = sublesson.id;
                     sublessonCard.innerHTML = `
-                        <i class="fas ${sublesson.icon}"></i>
+                        <i class="fas ${sublesson.icon || 'fa-folder'}"></i>
                         <h3>${sublesson.name}</h3>
-                        <p>${sublesson.description}</p>
+                        <p>${sublesson.description || ''}</p>
                     `;
                     
                     sublessonCard.addEventListener('click', function() {
@@ -2095,7 +2137,10 @@
                             this.classList.add('selected');
                             selectedSublesson = this.dataset.sublesson;
                             
-                            const sublessonName = sublessons.find(s => s.id === selectedSublesson)?.name || '';
+                            const sublessonObj = sublessons.find(s => s.id === selectedSublesson);
+                            const sublessonName = sublessonObj ? sublessonObj.name : '';
+                            console.log('تم اختيار القسم الفرعي:', sublessonName);
+                            
                             elements.quizTitle.textContent += ` - ${sublessonName}`;
                             
                             setTimeout(() => {
@@ -2118,6 +2163,7 @@
                 elements.sublessonSelectionContainer.style.display = 'block';
             } else {
                 // إذا لم يكن هناك أقسام فرعية، انتقل مباشرة إلى الاختبارات
+                console.log('لا توجد أقسام فرعية، الانتقال مباشرة للاختبارات');
                 setTimeout(() => {
                     elements.lessonSelectionContainer.style.display = 'none';
                     elements.quizContainer.style.display = 'block';
@@ -2136,34 +2182,61 @@
             elements.quizLoading.style.display = 'flex';
             elements.questionContainer.innerHTML = '';
             
+            console.log('جاري تحميل الأسئلة...');
+            console.log('معايير التصفية:', {
+                year: selectedYear,
+                section: selectedSection,
+                subject: selectedSubject,
+                lesson: selectedLesson,
+                sublesson: selectedSublesson
+            });
+            
             const questionsRef = database.ref('questions');
             questionsRef.once('value', (snapshot) => {
-                questions = [];
+                const allQuestions = [];
                 categories = new Set(['all']);
                 
                 snapshot.forEach((childSnapshot) => {
                     const question = childSnapshot.val();
                     question.id = childSnapshot.key;
-                    
-                    // تصفية الأسئلة بناءً على الصف والقسم والمادة والدرس والقسم الفرعي
-                    if (question.year === selectedYear && 
-                        question.section === selectedSection && 
-                        (!selectedSubject || question.subject === selectedSubject) &&
-                        (!selectedLesson || question.lesson === selectedLesson) &&
-                        (!selectedSublesson || question.sublesson === selectedSublesson)) {
-                        questions.push(question);
-                        
-                        if (question.category) {
-                            categories.add(question.category);
-                        }
-                    }
+                    allQuestions.push(question);
                 });
+                
+                console.log('إجمالي الأسئلة في Firebase:', allQuestions.length);
+                
+                // تصفية الأسئلة بناءً على المعايير المحددة
+                questions = allQuestions.filter(q => {
+                    // التحقق من الصف والقسم (إلزاميان)
+                    const yearMatch = q.year === selectedYear;
+                    const sectionMatch = q.section === selectedSection;
+                    
+                    // التحقق من المواد (إذا تم اختيار مادة)
+                    const subjectMatch = !selectedSubject || q.subject === selectedSubject || !q.subject;
+                    
+                    // التحقق من الدروس (إذا تم اختيار درس)
+                    const lessonMatch = !selectedLesson || q.lesson === selectedLesson || !q.lesson;
+                    
+                    // التحقق من الأقسام الفرعية (إذا تم اختيار قسم فرعي)
+                    const sublessonMatch = !selectedSublesson || q.sublesson === selectedSublesson || !q.sublesson;
+                    
+                    const matches = yearMatch && sectionMatch && subjectMatch && lessonMatch && sublessonMatch;
+                    
+                    if (matches && q.category) {
+                        categories.add(q.category);
+                    }
+                    
+                    return matches;
+                });
+                
+                console.log('الأسئلة بعد التصفية:', questions.length);
                 
                 updateCategoryFilters();
                 
                 if (questions.length > 0) {
+                    console.log('تم العثور على أسئلة، بدء الاختبار');
                     startQuiz();
                 } else {
+                    console.log('لم يتم العثور على أسئلة');
                     showNoQuestionsMessage();
                 }
                 
@@ -2171,7 +2244,7 @@
             }, (error) => {
                 console.error('خطأ في تحميل الأسئلة:', error);
                 elements.quizLoading.style.display = 'none';
-                showError('حدث خطأ في تحميل الأسئلة');
+                showError('حدث خطأ في تحميل الأسئلة: ' + error.message);
             });
         } catch (error) {
             console.error('خطأ في دالة تحميل الأسئلة:', error);
@@ -2191,20 +2264,40 @@
             elements.quizLoading.style.display = 'flex';
             elements.questionContainer.innerHTML = '';
             
-            const filteredQuestions = questions.filter(q => q.category === selectedCategory);
-            
-            if (filteredQuestions.length > 0) {
-                questions = filteredQuestions;
-                currentQuestionIndex = 0;
-                score = 0;
-                userAnswers = Array(questions.length).fill(null);
-                showQuestion();
-                updateProgressBar();
-            } else {
-                showNoQuestionsMessage();
-            }
-            
-            elements.quizLoading.style.display = 'none';
+            const questionsRef = database.ref('questions');
+            questionsRef.once('value', (snapshot) => {
+                const allQuestions = [];
+                snapshot.forEach((childSnapshot) => {
+                    const question = childSnapshot.val();
+                    question.id = childSnapshot.key;
+                    
+                    if (question.year === selectedYear && 
+                        question.section === selectedSection && 
+                        (!selectedSubject || question.subject === selectedSubject) &&
+                        (!selectedLesson || question.lesson === selectedLesson) &&
+                        (!selectedSublesson || question.sublesson === selectedSublesson) &&
+                        question.category === selectedCategory) {
+                        allQuestions.push(question);
+                    }
+                });
+                
+                if (allQuestions.length > 0) {
+                    questions = allQuestions;
+                    currentQuestionIndex = 0;
+                    score = 0;
+                    userAnswers = Array(questions.length).fill(null);
+                    showQuestion();
+                    updateProgressBar();
+                } else {
+                    showNoQuestionsMessage();
+                }
+                
+                elements.quizLoading.style.display = 'none';
+            }, (error) => {
+                console.error('خطأ في تصفية الأسئلة:', error);
+                elements.quizLoading.style.display = 'none';
+                showError('حدث خطأ في تصفية الأسئلة');
+            });
         } catch (error) {
             console.error('خطأ في تصفية الأسئلة:', error);
             elements.quizLoading.style.display = 'none';
@@ -2235,10 +2328,12 @@
             currentQuestionIndex = 0;
             score = 0;
             userAnswers = Array(questions.length).fill(null);
+            quizStartTime = new Date();
             showQuestion();
             updateProgressBar();
             elements.quizContainer.style.display = 'block';
             elements.resultsContainer.style.display = 'none';
+            console.log('تم بدء الاختبار بعدد أسئلة:', questions.length);
         } catch (error) {
             console.error('خطأ في بدء الاختبار:', error);
             showError('حدث خطأ في بدء الاختبار');
@@ -2424,6 +2519,8 @@
             
             // تسجيل نشاط إجراء اختبار
             trackQuizCompletion(score, percentage, timeTaken);
+            
+            console.log('تم عرض النتائج: الدرجة', score, 'من', questions.length);
         } catch (error) {
             console.error('خطأ في عرض النتائج:', error);
             showError('حدث خطأ في عرض النتائج');
@@ -2565,8 +2662,10 @@
     function showNoQuestionsMessage() {
         try {
             elements.questionContainer.innerHTML = `
-                <div class="no-questions">
-                    <i class="fas fa-info-circle"></i> لا توجد إختبارات متاحة حالياً للصف والقسم المحدد.
+                <div class="no-questions" style="text-align: center; padding: 60px 20px;">
+                    <i class="fas fa-info-circle" style="font-size: 64px; color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3 style="margin-bottom: 15px;">لا توجد إختبارات متاحة</h3>
+                    <p style="color: var(--text-secondary); font-size: 16px;">لا توجد إختبارات متاحة حالياً للصف والقسم المحدد.</p>
                 </div>
             `;
             elements.nextBtn.style.display = 'none';
@@ -2596,10 +2695,10 @@
                     
                     if (!examActive) {
                         elements.yearSelectionContainer.innerHTML = `
-                            <div class="no-questions" style="grid-column: 1 / -1;">
-                                <i class="fas fa-exclamation-triangle"></i> 
-                                <h3>الاختبارات متوقفة حالياً</h3>
-                                <p>الرجاء المحاولة لاحقاً عندما يتم تفعيل الاختبارات من قبل المسؤول</p>
+                            <div class="no-questions" style="grid-column: 1 / -1; text-align: center; padding: 60px;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 64px; color: var(--warning); margin-bottom: 20px;"></i>
+                                <h3 style="margin-bottom: 15px;">الاختبارات متوقفة حالياً</h3>
+                                <p style="color: var(--text-secondary);">الرجاء المحاولة لاحقاً عندما يتم تفعيل الاختبارات من قبل المسؤول</p>
                             </div>
                         `;
                     }
@@ -2690,6 +2789,12 @@
                 elements.adTitle.textContent = ad.title;
                 elements.adDescription.textContent = ad.description;
                 elements.adContainer.style.display = 'block';
+                
+                if (ad.url) {
+                    elements.adAction.style.display = 'inline-flex';
+                } else {
+                    elements.adAction.style.display = 'none';
+                }
             }
         } catch (error) {
             console.error('خطأ في عرض الإعلان:', error);
