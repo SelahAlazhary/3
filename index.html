@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -12,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* جميع الأنماط CSS كما هي */
+        /* جميع الأنماط CSS كما هي - لم يتم تغييرها */
         :root {
             --primary: #4361ee;
             --primary-light: #4895ef;
@@ -703,7 +702,7 @@
             display: none !important;
         }
 
-        /* شاشة التحميل العلمية المحسنة */
+        /* Loading Overlay - تصميم علمي حديث */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -711,7 +710,7 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -824,22 +823,12 @@
             animation: dots 1.5s infinite;
         }
 
-        /* ===== تأثير الخروج من الضباب (Fog Effect) ===== */
+        /* تأثير الخروج من الضباب (جديد) */
         @keyframes fogOut {
             0% {
                 opacity: 0;
                 filter: blur(10px);
                 transform: scale(0.9);
-            }
-            30% {
-                opacity: 0.3;
-                filter: blur(7px);
-                transform: scale(0.93);
-            }
-            60% {
-                opacity: 0.7;
-                filter: blur(3px);
-                transform: scale(0.97);
             }
             100% {
                 opacity: 1;
@@ -849,56 +838,7 @@
         }
 
         .fog-animation {
-            animation: fogOut 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-        }
-
-        /* تأخيرات متتالية للعناصر */
-        .delay-1 {
-            animation-delay: 0.1s;
-        }
-
-        .delay-2 {
-            animation-delay: 0.2s;
-        }
-
-        .delay-3 {
-            animation-delay: 0.3s;
-        }
-
-        .delay-4 {
-            animation-delay: 0.4s;
-        }
-
-        .delay-5 {
-            animation-delay: 0.5s;
-        }
-
-        /* تأثير ضبابي للخلفية */
-        .fog-background {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .fog-background::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            animation: fogMove 20s linear infinite;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        @keyframes fogMove {
-            0% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            100% {
-                transform: translate(10%, 10%) rotate(10deg);
-            }
+            animation: fogOut 0.8s ease-out forwards;
         }
 
         @keyframes pulseCore {
@@ -1259,7 +1199,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- شاشة التحميل الأولية (ستظهر لمدة 3 ثوانٍ) -->
+        <!-- شاشة التحميل الأولية (جديد) -->
         <div id="initial-loading" class="loading-overlay" style="display: flex;">
             <div class="scientific-loader">
                 <div class="atom-core"></div>
@@ -1274,8 +1214,7 @@
                 </div>
             </div>
             <div class="loading-text">إختبارات سلاح الأزهري<span class="loading-dots"></span></div>
-            <div class="loading-subtext">نظام الاختبارات الإلكترونية المتطور</div>
-            <div class="loading-subtext" style="margin-top: 10px; font-size: 0.9rem;">يتم تجهيز المحتوى التعليمي...</div>
+            <div class="loading-subtext">يتم تجهيز المحتوى التعليمي...</div>
         </div>
         
         <!-- تم إزالة التولبار العلوي بالكامل -->
@@ -1292,7 +1231,7 @@
             </button>
         </div>
         
-        <!-- عرض الصفوف الدراسية (سيتم إخفاؤها في البداية) -->
+        <!-- عرض الصفوف الدراسية -->
         <div id="year-selection-container" class="year-selection" style="display: none;">
             <h1>جاري التحميل ...</h1>
         </div>
@@ -1510,7 +1449,7 @@
         adTitle: document.getElementById('ad-title'),
         adDescription: document.getElementById('ad-description'),
         adAction: document.getElementById('ad-action'),
-        initialLoading: document.getElementById('initial-loading')
+        initialLoading: document.getElementById('initial-loading') // عنصر جديد
     };
 
     // تهيئة التطبيق
@@ -1530,11 +1469,23 @@
             
             if (sectionId) {
                 console.log('تم العثور على section في الرابط:', sectionId);
-                // إذا كان هناك رابط مباشر، لا نعرض الصفوف الدراسية أبداً
-                // نبدأ مباشرة بتحميل القسم المطلوب
-                loadSectionFromUrlWithDelay(sectionId);
+                // إذا كان هناك رابط مباشر، ننتظر 3 ثوان ثم نخفي التحميل ونظهر المحتوى
+                setTimeout(() => {
+                    elements.initialLoading.style.display = 'none';
+                    elements.yearSelectionContainer.style.display = 'grid';
+                    elements.yearSelectionContainer.classList.add('fog-animation');
+                    loadInitialData();
+                    checkExamStatus();
+                    restoreSavedState();
+                    loadAd();
+                    
+                    // بعد تحميل البيانات، نبحث عن القسم
+                    setTimeout(() => {
+                        loadSectionFromUrl(sectionId);
+                    }, 1000);
+                }, 3000);
             } else {
-                // إذا لم يكن هناك رابط، نظهر الصفوف الدراسية بعد 3 ثوانٍ
+                // إذا لم يكن هناك رابط، ننتظر 3 ثوان ثم نخفي التحميل
                 setTimeout(() => {
                     elements.initialLoading.style.display = 'none';
                     elements.yearSelectionContainer.style.display = 'grid';
@@ -1556,114 +1507,55 @@
         }
     }
     
-    // تحميل القسم من الرابط مع تأخير 3 ثوانٍ وتأثير الضباب
-    function loadSectionFromUrlWithDelay(sectionId) {
-        console.log('بدء تحميل القسم من الرابط مع تأخير 3 ثوانٍ:', sectionId);
-        
-        // إخفاء شاشة التحميل بعد 3 ثوانٍ بالضبط
-        setTimeout(async () => {
-            try {
-                // تحميل البيانات الأساسية أولاً
-                await loadSectionsData();
-                
-                // البحث عن القسم في البيانات المحملة
-                const sectionRef = database.ref('sections/' + sectionId);
-                sectionRef.once('value', (snapshot) => {
-                    if (snapshot.exists()) {
-                        const section = snapshot.val();
-                        console.log('تم العثور على القسم:', section);
-                        
-                        // البحث عن الصف المرتبط بالقسم
-                        if (section.grades && section.grades.length > 0) {
-                            selectedYear = section.grades[0];
-                            selectedSection = sectionId;
-                            
-                            // إخفاء شاشة التحميل
-                            elements.initialLoading.style.display = 'none';
-                            
-                            // عرض الأقسام مع تحديد القسم المطلوب
-                            elements.sectionSelectionContainer.style.display = 'block';
-                            
-                            // إضافة تأثير الضباب على الحاوية
-                            elements.sectionSelectionContainer.classList.add('fog-animation');
-                            
-                            // تحميل الأقسام للصف المختار مع تحديد القسم المطلوب
-                            loadSectionsForYear(selectedYear, sectionId);
-                            
-                            // تحديث عنوان الاختبار
-                            const yearText = getYearText(selectedYear);
-                            elements.quizTitle.textContent = `اختبار إختبارات سلاح الأزهري - ${yearText} - ${section.name}`;
-                        } else {
-                            showError('القسم المطلوب غير مرتبط بأي صف');
-                            elements.initialLoading.style.display = 'none';
-                            elements.yearSelectionContainer.style.display = 'grid';
-                            elements.yearSelectionContainer.classList.add('fog-animation');
-                        }
-                    } else {
-                        console.error('القسم المطلوب غير موجود:', sectionId);
-                        showError('القسم المطلوب غير موجود');
-                        elements.initialLoading.style.display = 'none';
-                        elements.yearSelectionContainer.style.display = 'grid';
-                        elements.yearSelectionContainer.classList.add('fog-animation');
-                    }
-                    
-                    // إعداد باقي المستمعين
-                    setupEventListeners();
-                    loadAd();
-                }, (error) => {
-                    console.error('خطأ في تحميل القسم من الرابط:', error);
-                    showError('حدث خطأ في تحميل القسم من الرابط');
-                    elements.initialLoading.style.display = 'none';
-                    elements.yearSelectionContainer.style.display = 'grid';
-                    elements.yearSelectionContainer.classList.add('fog-animation');
-                });
-            } catch (error) {
-                console.error('خطأ في تحميل القسم:', error);
-                showError('حدث خطأ في تحميل القسم');
-                elements.initialLoading.style.display = 'none';
-                elements.yearSelectionContainer.style.display = 'grid';
-                elements.yearSelectionContainer.classList.add('fog-animation');
-            }
-        }, 3000); // 3 ثوانٍ بالضبط
-    }
-    
-    // دالة لتحميل بيانات الأقسام أولاً
-    function loadSectionsData() {
-        return new Promise((resolve) => {
-            const sectionsRef = database.ref('sections');
-            sectionsRef.once('value', (snapshot) => {
-                sections = [];
-                snapshot.forEach((childSnapshot) => {
-                    const section = childSnapshot.val();
-                    section.id = childSnapshot.key;
-                    sections.push(section);
-                });
-                console.log('تم تحميل الأقسام:', sections.length);
-                resolve();
-            }, (error) => {
-                console.error('خطأ في تحميل الأقسام:', error);
-                resolve(); // حتى لو فشل، نكمل
-            });
-        });
-    }
-    
-    // تطبيق تأثير الضباب على العناصر
-    function applyFogEffect(container, selector, withDelay = true) {
+    // تحميل القسم من الرابط (دالة جديدة)
+    function loadSectionFromUrl(sectionId) {
         try {
-            const elements = container.querySelectorAll(selector);
-            elements.forEach((element, index) => {
-                // إزالة أي كلاسات سابقة
-                element.classList.remove('fog-animation', 'delay-1', 'delay-2', 'delay-3', 'delay-4', 'delay-5');
-                
-                // إضافة تأثير الضباب
-                element.classList.add('fog-animation');
-                
-                // إضافة تأخير متتالي إذا طُلب
-                if (withDelay) {
-                    const delayClass = `delay-${(index % 5) + 1}`;
-                    element.classList.add(delayClass);
+            console.log('جاري تحميل القسم من الرابط:', sectionId);
+            
+            // إخفاء اختيار الصف
+            elements.yearSelectionContainer.style.display = 'none';
+            
+            // البحث عن القسم في Firebase
+            const sectionRef = database.ref('sections/' + sectionId);
+            sectionRef.once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    const section = snapshot.val();
+                    console.log('تم العثور على القسم:', section);
+                    
+                    // البحث عن الصف المرتبط بالقسم
+                    if (section.grades && section.grades.length > 0) {
+                        selectedYear = section.grades[0];
+                        selectedSection = sectionId;
+                        
+                        // عرض الأقسام (مع تحديد هذا القسم)
+                        elements.sectionSelectionContainer.style.display = 'block';
+                        elements.sectionSelectionContainer.classList.add('fog-animation');
+                        
+                        // تحميل الأقسام للصف المختار مع تحديد القسم المطلوب
+                        loadSectionsForYear(selectedYear, sectionId);
+                    } else {
+                        showError('القسم المطلوب غير مرتبط بأي صف');
+                    }
+                } else {
+                    console.error('القسم المطلوب غير موجود:', sectionId);
+                    showError('القسم المطلوب غير موجود');
                 }
+            }, (error) => {
+                console.error('خطأ في تحميل القسم من الرابط:', error);
+                showError('حدث خطأ في تحميل القسم من الرابط');
             });
+        } catch (error) {
+            console.error('خطأ في تحميل القسم من الرابط:', error);
+            showError('حدث خطأ في تحميل القسم من الرابط');
+        }
+    }
+    
+    // تطبيق تأثير الضباب على العناصر (دالة جديدة)
+    function applyFogEffect(container) {
+        try {
+            if (container) {
+                container.classList.add('fog-animation');
+            }
         } catch (error) {
             console.error('خطأ في تطبيق تأثير الضباب:', error);
         }
@@ -1966,7 +1858,7 @@
                         
                         elements.yearSelectionContainer.style.display = 'none';
                         elements.sectionSelectionContainer.style.display = 'block';
-                        elements.sectionSelectionContainer.classList.add('fog-animation');
+                        applyFogEffect(elements.sectionSelectionContainer);
                         
                         const yearText = getYearText(selectedYear);
                         elements.quizTitle.textContent = `اختبار إختبارات سلاح الأزهري - ${yearText}`;
@@ -2095,9 +1987,6 @@
                     });
                 });
                 
-                // تطبيق تأثير الضباب على بطاقات الأقسام
-                applyFogEffect(elements.sectionContainer, '.section-card', true);
-                
                 // إذا كان هناك قسم محدد من الرابط، قم بتحميل المواد تلقائياً
                 if (highlightSectionId) {
                     setTimeout(() => {
@@ -2170,12 +2059,9 @@
                     elements.subjectContainer.appendChild(subjectCard);
                 });
                 
-                // تطبيق تأثير الضباب على بطاقات المواد
-                applyFogEffect(elements.subjectContainer, '.subject-card', true);
-                
                 elements.sectionSelectionContainer.style.display = 'none';
                 elements.subjectSelectionContainer.style.display = 'block';
-                elements.subjectSelectionContainer.classList.add('fog-animation');
+                applyFogEffect(elements.subjectSelectionContainer);
             } else {
                 elements.subjectContainer.innerHTML = `
                     <div class="no-questions" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
@@ -2243,19 +2129,16 @@
                     elements.lessonContainer.appendChild(lessonCard);
                 });
                 
-                // تطبيق تأثير الضباب على بطاقات الدروس
-                applyFogEffect(elements.lessonContainer, '.lesson-card', true);
-                
                 elements.subjectSelectionContainer.style.display = 'none';
                 elements.lessonSelectionContainer.style.display = 'block';
-                elements.lessonSelectionContainer.classList.add('fog-animation');
+                applyFogEffect(elements.lessonSelectionContainer);
             } else {
                 // إذا لم يكن هناك دروس، انتقل مباشرة إلى الاختبارات
                 console.log('لا توجد دروس، الانتقال مباشرة للاختبارات');
                 setTimeout(() => {
                     elements.subjectSelectionContainer.style.display = 'none';
                     elements.quizContainer.style.display = 'block';
-                    elements.quizContainer.classList.add('fog-animation');
+                    applyFogEffect(elements.quizContainer);
                     loadQuestions();
                 }, 500);
             }
@@ -2307,7 +2190,7 @@
                             setTimeout(() => {
                                 elements.sublessonSelectionContainer.style.display = 'none';
                                 elements.quizContainer.style.display = 'block';
-                                elements.quizContainer.classList.add('fog-animation');
+                                applyFogEffect(elements.quizContainer);
                                 loadQuestions();
                             }, 500);
                             
@@ -2321,19 +2204,16 @@
                     elements.sublessonContainer.appendChild(sublessonCard);
                 });
                 
-                // تطبيق تأثير الضباب على بطاقات الأقسام الفرعية
-                applyFogEffect(elements.sublessonContainer, '.sublesson-card', true);
-                
                 elements.lessonSelectionContainer.style.display = 'none';
                 elements.sublessonSelectionContainer.style.display = 'block';
-                elements.sublessonSelectionContainer.classList.add('fog-animation');
+                applyFogEffect(elements.sublessonSelectionContainer);
             } else {
                 // إذا لم يكن هناك أقسام فرعية، انتقل مباشرة إلى الاختبارات
                 console.log('لا توجد أقسام فرعية، الانتقال مباشرة للاختبارات');
                 setTimeout(() => {
                     elements.lessonSelectionContainer.style.display = 'none';
                     elements.quizContainer.style.display = 'block';
-                    elements.quizContainer.classList.add('fog-animation');
+                    applyFogEffect(elements.quizContainer);
                     loadQuestions();
                 }, 500);
             }
@@ -2662,7 +2542,7 @@
             
             elements.quizContainer.style.display = 'none';
             elements.resultsContainer.style.display = 'block';
-            elements.resultsContainer.classList.add('fog-animation');
+            applyFogEffect(elements.resultsContainer);
             elements.scoreDisplay.textContent = score;
             
             const percentage = Math.round((score / questions.length) * 100);
