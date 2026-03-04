@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* جميع الأنماط CSS كما هي - لم يتم تغييرها */
         :root {
             --primary: #4361ee;
             --primary-light: #4895ef;
@@ -48,7 +47,6 @@
             --gradient-warning: linear-gradient(135deg, #f8961e 0%, #f9c74f 100%);
         }
 
-        /* Dark Mode Variables */
         [data-theme="dark"] {
             --primary: #6366f1;
             --primary-light: #818cf8;
@@ -110,12 +108,12 @@
             padding: 20px;
         }
 
-        /* تم إزالة التولبار العلوي بالكامل - إخفاء header */
+        /* Header مخفي */
         header {
             display: none !important;
         }
 
-        /* زر مشاركة القسم - يظهر على القسم نفسه */
+        /* زر مشاركة القسم */
         .section-share-btn {
             position: absolute;
             top: 15px;
@@ -151,12 +149,10 @@
             font-size: 18px;
         }
 
-        /* تخصيص بطاقة القسم لإضافة positioning نسبي */
         .section-card {
             position: relative;
         }
 
-        /* Card Styles - تصميم حديث */
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -184,7 +180,6 @@
             transform: translateY(-5px);
         }
 
-        /* Year Selection - تصميم حديث */
         .year-selection {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -262,7 +257,6 @@
             background-clip: unset;
         }
 
-        /* Section Grid - تصميم حديث */
         .section-grid, .lesson-grid, .sublesson-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -275,7 +269,6 @@
             padding: 24px;
         }
 
-        /* Quiz Container - تصميم حديث */
         .quiz-container {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -305,7 +298,6 @@
             font-weight: 700;
         }
 
-        /* تم إخفاء المؤقت */
         .timer {
             display: none !important;
         }
@@ -340,7 +332,6 @@
             animation: shine 2s infinite;
         }
 
-        /* Question Styles - تصميم حديث */
         .question {
             margin-bottom: 30px;
             padding: 20px;
@@ -359,20 +350,26 @@
             line-height: 1.6;
             color: var(--text-primary);
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
+        /* التصميم الجديد لرقم السؤال - مربع عصري */
         .question-number {
             display: inline-flex;
-            width: 36px;
-            height: 36px;
+            min-width: 40px;
+            height: 40px;
             background: var(--gradient-primary);
             color: white;
-            border-radius: 50%;
+            border-radius: 12px;
             text-align: center;
-            line-height: 36px;
-            margin-left: 12px;
+            align-items: center;
+            justify-content: center;
             font-weight: 700;
-            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+            padding: 0 8px;
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+            font-size: 1.1rem;
         }
 
         .options {
@@ -481,7 +478,6 @@
             border-color: var(--primary-dark);
         }
 
-        /* Navigation Buttons - تصميم حديث */
         .navigation {
             display: flex;
             justify-content: space-between;
@@ -583,7 +579,6 @@
             font-size: 0.9rem;
         }
 
-        /* Results Container - تصميم حديث */
         .results-container {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -682,7 +677,6 @@
             padding-bottom: 0;
         }
 
-        /* زر الرجوع في أسفل الصفحة - تم إخفاؤه */
         .back-btn {
             position: fixed;
             bottom: 30px;
@@ -702,181 +696,50 @@
             display: none !important;
         }
 
-        /* Loading Overlay - تصميم علمي حديث */
+        /* شاشة التحميل الجديدة - اللوجو في المنتصف */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 3000;
             color: white;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            overflow: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
-        .scientific-loader {
-            width: 200px;
-            height: 200px;
-            position: relative;
-            margin-bottom: 40px;
+        .loading-logo {
+            width: 180px;
+            height: auto;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+            animation: float 3s ease-in-out infinite;
         }
 
-        .atom-core {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            background: radial-gradient(circle, #4cc9f0 0%, #4361ee 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 30px rgba(76, 201, 240, 0.5);
-            animation: pulseCore 2s infinite;
-        }
-
-        .electron-orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 2px dashed rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-        }
-
-        .electron-orbit:nth-child(1) {
-            width: 120px;
-            height: 120px;
-        }
-
-        .electron-orbit:nth-child(2) {
-            width: 160px;
-            height: 160px;
-            transform: translate(-50%, -50%) rotate(45deg);
-        }
-
-        .electron-orbit:nth-child(3) {
-            width: 80px;
-            height: 80px;
-            transform: translate(-50%, -50%) rotate(30deg);
-        }
-
-        .electron {
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: radial-gradient(circle, #f8961e 0%, #f9c74f 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 15px rgba(248, 150, 30, 0.8);
-        }
-
-        .electron-orbit:nth-child(1) .electron {
-            top: -8px;
-            left: 50%;
-            margin-left: -8px;
-            animation: orbit1 3s linear infinite;
-        }
-
-        .electron-orbit:nth-child(2) .electron {
-            top: -8px;
-            right: 50%;
-            margin-right: -8px;
-            animation: orbit2 2.5s linear infinite;
-        }
-
-        .electron-orbit:nth-child(3) .electron {
-            bottom: -8px;
-            left: 50%;
-            margin-left: -8px;
-            animation: orbit3 4s linear infinite;
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
         }
 
         .loading-text {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            font-weight: 600;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .loading-subtext {
-            font-size: 1rem;
-            opacity: 0.8;
-            text-align: center;
-            max-width: 300px;
-            line-height: 1.5;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
         .loading-dots {
             display: inline-block;
-            width: 20px;
-            text-align: left;
         }
 
         .loading-dots::after {
-            content: '';
+            content: '...';
             animation: dots 1.5s infinite;
-        }
-
-        /* تأثير الخروج من الضباب (جديد) */
-        @keyframes fogOut {
-            0% {
-                opacity: 0;
-                filter: blur(10px);
-                transform: scale(0.9);
-            }
-            100% {
-                opacity: 1;
-                filter: blur(0);
-                transform: scale(1);
-            }
-        }
-
-        .fog-animation {
-            animation: fogOut 0.8s ease-out forwards;
-        }
-
-        @keyframes pulseCore {
-            0%, 100% {
-                transform: translate(-50%, -50%) scale(1);
-                box-shadow: 0 0 30px rgba(76, 201, 240, 0.5);
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.1);
-                box-shadow: 0 0 50px rgba(76, 201, 240, 0.8);
-            }
-        }
-
-        @keyframes orbit1 {
-            0% {
-                transform: rotate(0deg) translate(60px) rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg) translate(60px) rotate(-360deg);
-            }
-        }
-
-        @keyframes orbit2 {
-            0% {
-                transform: rotate(0deg) translate(80px) rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg) translate(80px) rotate(-360deg);
-            }
-        }
-
-        @keyframes orbit3 {
-            0% {
-                transform: rotate(0deg) translate(40px) rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg) translate(40px) rotate(-360deg);
-            }
         }
 
         @keyframes dots {
@@ -885,12 +748,16 @@
             60%, 100% { content: '...'; }
         }
 
-        /* تم إخفاء لوحة الإدارة بالكامل */
+        /* تأثير التلاشي عند التمرير */
+        .fade-on-scroll {
+            transition: opacity 0.3s ease;
+        }
+
+        /* تم إخفاء لوحة الإدارة */
         .admin-panel, .admin-toggle, .password-modal {
             display: none !important;
         }
 
-        /* Secure Badge - تصميم حديث */
         .secure-badge {
             position: fixed;
             bottom: 24px;
@@ -913,7 +780,6 @@
             background: var(--success-light);
         }
 
-        /* Ad Container Styles - تصميم حديث */
         .ad-container {
             background: var(--gradient-warning);
             color: white;
@@ -958,7 +824,6 @@
             transform: rotate(90deg);
         }
 
-        /* Medal Styles - تصميم حديث */
         .fa-medal {
             font-size: 28px;
             margin-right: 8px;
@@ -977,7 +842,6 @@
             color: #CD7F32;
         }
 
-        /* أنيميشن ثلاثي الأبعاد محسن */
         .card-3d {
             transform-style: preserve-3d;
             perspective: 1000px;
@@ -1000,7 +864,6 @@
             transform: translateY(-10px) rotateX(3deg) rotateY(3deg) scale(1.02);
         }
 
-        /* تأثيرات دخول محسنة */
         @keyframes slideIn3D {
             0% {
                 opacity: 0;
@@ -1016,7 +879,6 @@
             animation: slideIn3D 0.6s ease-out forwards;
         }
 
-        /* تأثيرات زر محسنة */
         .btn-3d {
             transform-style: preserve-3d;
             position: relative;
@@ -1040,7 +902,6 @@
             transform: translateY(2px) scale(0.98);
         }
 
-        /* تأثيرات الشعار المحسنة */
         .logo-container {
             transform-style: preserve-3d;
             perspective: 1000px;
@@ -1060,7 +921,6 @@
             filter: drop-shadow(0 6px 12px rgba(99, 102, 241, 0.5));
         }
 
-        /* Responsive Styles - تصميم حديث */
         @media (max-width: 768px) {
             .year-selection {
                 grid-template-columns: 1fr;
@@ -1119,7 +979,6 @@
             }
         }
 
-        /* Animations - تصميم حديث */
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -1173,7 +1032,6 @@
             100% { left: 100%; }
         }
 
-        /* Custom Scrollbar - تصميم حديث */
         ::-webkit-scrollbar {
             width: 10px;
         }
@@ -1199,22 +1057,12 @@
 </head>
 <body>
     <div class="container">
-        <!-- شاشة التحميل الأولية (جديد) -->
+        <!-- شاشة التحميل الأولية - تصميم جديد مع اللوجو -->
         <div id="initial-loading" class="loading-overlay" style="display: flex;">
-            <div class="scientific-loader">
-                <div class="atom-core"></div>
-                <div class="electron-orbit">
-                    <div class="electron"></div>
-                </div>
-                <div class="electron-orbit">
-                    <div class="electron"></div>
-                </div>
-                <div class="electron-orbit">
-                    <div class="electron"></div>
-                </div>
-            </div>
-            <div class="loading-text">إختبارات سلاح الأزهري<span class="loading-dots"></span></div>
-            <div class="loading-subtext">يتم تجهيز المحتوى التعليمي...</div>
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdyuIMWOk4qbKO_qCaKOHo859JMs3To_OJjpQ8u5fU0ULewA-AdNp7Izuv9PUOIOTGTUsNM6DTVVbRWKe2OEDTBcHnxOnOrCylsq_V3YhUFPqTkPJ7XOuzWzbCXKW-UnoLEwqsE8XjaHiWPZu2dC_pESia4uQOATzelupKDAUbuO1_jH2003wsgUO0PPiO/s1080/Selah%20Elazhary%20Transperant%20logo.png" 
+                 alt="سلاح الأزهري" 
+                 class="loading-logo">
+            <div class="loading-text">جاري التحميل<span class="loading-dots"></span></div>
         </div>
         
         <!-- تم إزالة التولبار العلوي بالكامل -->
@@ -1267,22 +1115,12 @@
         </div>
         
         <div class="quiz-container" id="quiz-container" style="display: none;">
-            <!-- تم تغيير تصميم التحميل إلى تصميم علمي -->
+            <!-- شاشة تحميل الاختبارات بنفس التصميم الجديد (اللوجو) -->
             <div class="loading-overlay" id="quiz-loading">
-                <div class="scientific-loader">
-                    <div class="atom-core"></div>
-                    <div class="electron-orbit">
-                        <div class="electron"></div>
-                    </div>
-                    <div class="electron-orbit">
-                        <div class="electron"></div>
-                    </div>
-                    <div class="electron-orbit">
-                        <div class="electron"></div>
-                    </div>
-                </div>
-                <div class="loading-text">جاري تحميل الإختبارات<span class="loading-dots"></span></div>
-                <div class="loading-subtext">نظام إختبارات سلاح الأزهري - التعليم الذكي</div>
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdyuIMWOk4qbKO_qCaKOHo859JMs3To_OJjpQ8u5fU0ULewA-AdNp7Izuv9PUOIOTGTUsNM6DTVVbRWKe2OEDTBcHnxOnOrCylsq_V3YhUFPqTkPJ7XOuzWzbCXKW-UnoLEwqsE8XjaHiWPZu2dC_pESia4uQOATzelupKDAUbuO1_jH2003wsgUO0PPiO/s1080/Selah%20Elazhary%20Transperant%20logo.png" 
+                     alt="سلاح الأزهري" 
+                     class="loading-logo">
+                <div class="loading-text">جاري التحميل<span class="loading-dots"></span></div>
             </div>
             
             <div class="quiz-header">
@@ -1415,7 +1253,6 @@
 
     // عناصر DOM
     const elements = {
-        // عناصر التطبيق الرئيسية
         quizContainer: document.getElementById('quiz-container'),
         questionContainer: document.getElementById('question-container'),
         resultsContainer: document.getElementById('results-container'),
@@ -1449,8 +1286,31 @@
         adTitle: document.getElementById('ad-title'),
         adDescription: document.getElementById('ad-description'),
         adAction: document.getElementById('ad-action'),
-        initialLoading: document.getElementById('initial-loading') // عنصر جديد
+        initialLoading: document.getElementById('initial-loading')
     };
+
+    // إضافة تأثير التلاشي عند التمرير
+    function initFadeOnScroll() {
+        const elementsToFade = document.querySelectorAll('.year-selection, .section-grid, .lesson-grid, .sublesson-grid, .quiz-container, .results-container');
+        
+        window.addEventListener('scroll', () => {
+            const scrollPosition = window.scrollY;
+            const windowHeight = window.innerHeight;
+            
+            elementsToFade.forEach(element => {
+                if (element.style.display !== 'none') {
+                    const elementTop = element.getBoundingClientRect().top + scrollPosition;
+                    const distanceFromTop = scrollPosition - elementTop;
+                    
+                    if (distanceFromTop > 100) {
+                        element.style.opacity = Math.max(0, 1 - (distanceFromTop - 100) / 200);
+                    } else {
+                        element.style.opacity = 1;
+                    }
+                }
+            });
+        });
+    }
 
     // تهيئة التطبيق
     function initApp() {
@@ -1463,13 +1323,15 @@
                 document.documentElement.setAttribute('data-theme', 'dark');
             }
             
+            // إضافة مستمع التمرير للتلاشي
+            initFadeOnScroll();
+            
             // التحقق من وجود section في URL
             const urlParams = new URLSearchParams(window.location.search);
             const sectionId = urlParams.get('section');
             
             if (sectionId) {
                 console.log('تم العثور على section في الرابط:', sectionId);
-                // إذا كان هناك رابط مباشر، ننتظر 3 ثوان ثم نخفي التحميل ونظهر المحتوى
                 setTimeout(() => {
                     elements.initialLoading.style.display = 'none';
                     elements.yearSelectionContainer.style.display = 'grid';
@@ -1479,13 +1341,11 @@
                     restoreSavedState();
                     loadAd();
                     
-                    // بعد تحميل البيانات، نبحث عن القسم
                     setTimeout(() => {
                         loadSectionFromUrl(sectionId);
                     }, 1000);
                 }, 3000);
             } else {
-                // إذا لم يكن هناك رابط، ننتظر 3 ثوان ثم نخفي التحميل
                 setTimeout(() => {
                     elements.initialLoading.style.display = 'none';
                     elements.yearSelectionContainer.style.display = 'grid';
@@ -1507,31 +1367,26 @@
         }
     }
     
-    // تحميل القسم من الرابط (دالة جديدة)
+    // تحميل القسم من الرابط
     function loadSectionFromUrl(sectionId) {
         try {
             console.log('جاري تحميل القسم من الرابط:', sectionId);
             
-            // إخفاء اختيار الصف
             elements.yearSelectionContainer.style.display = 'none';
             
-            // البحث عن القسم في Firebase
             const sectionRef = database.ref('sections/' + sectionId);
             sectionRef.once('value', (snapshot) => {
                 if (snapshot.exists()) {
                     const section = snapshot.val();
                     console.log('تم العثور على القسم:', section);
                     
-                    // البحث عن الصف المرتبط بالقسم
                     if (section.grades && section.grades.length > 0) {
                         selectedYear = section.grades[0];
                         selectedSection = sectionId;
                         
-                        // عرض الأقسام (مع تحديد هذا القسم)
                         elements.sectionSelectionContainer.style.display = 'block';
                         elements.sectionSelectionContainer.classList.add('fog-animation');
                         
-                        // تحميل الأقسام للصف المختار مع تحديد القسم المطلوب
                         loadSectionsForYear(selectedYear, sectionId);
                     } else {
                         showError('القسم المطلوب غير مرتبط بأي صف');
@@ -1550,7 +1405,7 @@
         }
     }
     
-    // تطبيق تأثير الضباب على العناصر (دالة جديدة)
+    // تطبيق تأثير الضباب على العناصر
     function applyFogEffect(container) {
         try {
             if (container) {
@@ -1564,21 +1419,16 @@
     // دالة المشاركة - إنشاء رابط القسم
     function shareSection(sectionId, sectionName) {
         try {
-            // إنشاء الرابط بنفس التنسيق المطلوب
             const baseUrl = window.location.origin + window.location.pathname;
             const shareUrl = `${baseUrl}?section=${sectionId}`;
             
-            // نسخ الرابط إلى الحافظة
             navigator.clipboard.writeText(shareUrl).then(() => {
-                // إظهار رسالة نجاح
                 showNotification(`تم نسخ رابط قسم "${sectionName}"`, 'success');
             }).catch(err => {
                 console.error('فشل في نسخ الرابط:', err);
-                // بديل للمتصفحات التي لا تدعم clipboard
                 prompt('انسخ الرابط:', shareUrl);
             });
             
-            // حفظ المشاركة في Firebase للإحصائيات
             const shareRef = database.ref('shares');
             shareRef.push({
                 sectionId: sectionId,
@@ -1596,7 +1446,6 @@
     // إظهار إشعار
     function showNotification(message, type = 'info') {
         try {
-            // إنشاء عنصر الإشعار
             const notification = document.createElement('div');
             notification.className = `notification notification-${type}`;
             notification.innerHTML = `
@@ -1604,7 +1453,6 @@
                 <span>${message}</span>
             `;
             
-            // تنسيق الإشعار
             notification.style.cssText = `
                 position: fixed;
                 top: 20px;
@@ -1624,7 +1472,6 @@
             
             document.body.appendChild(notification);
             
-            // إزالة الإشعار بعد 3 ثوان
             setTimeout(() => {
                 notification.style.animation = 'slideUp 0.3s ease';
                 setTimeout(() => {
@@ -1641,14 +1488,12 @@
     // تتبع دخول المستخدم
     function trackUserVisit() {
         try {
-            // توليد معرف فريد للمستخدم
             let userId = localStorage.getItem('userId');
             if (!userId) {
                 userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                 localStorage.setItem('userId', userId);
             }
             
-            // تسجيل الجلسة
             const session = {
                 userId: userId,
                 timestamp: new Date().toISOString(),
@@ -1656,27 +1501,21 @@
                 page: window.location.href
             };
             
-            // تحديث إحصائيات المستخدمين
             userStats.totalVisits++;
             userStats.uniqueUsers.add(userId);
             
-            // تتبع المستخدمين النشطين اليوم
             const today = new Date().toDateString();
             const userKey = `${userId}_${today}`;
             userStats.dailyActiveUsers.add(userKey);
             
-            // تتبع المستخدمين النشطين
             userStats.activeUsers.add(userId);
             
-            // تسجيل النشاط
             userStats.userActivities.push(session);
             
-            // الاحتفاظ بآخر 100 نشاط فقط
             if (userStats.userActivities.length > 100) {
                 userStats.userActivities = userStats.userActivities.slice(-100);
             }
             
-            // حساب الجلسات لكل مستخدم
             const userSessions = userStats.userSessions.find(s => s.userId === userId);
             if (userSessions) {
                 userSessions.count++;
@@ -1690,10 +1529,7 @@
                 });
             }
             
-            // حفظ الإحصائيات
             saveUserStats();
-            
-            // تحديث البيانات في Firebase
             saveUserActivityToFirebase(session);
         } catch (error) {
             console.error('خطأ في تتبع دخول المستخدم:', error);
@@ -1703,7 +1539,6 @@
     // حفظ إحصائيات المستخدمين
     function saveUserStats() {
         try {
-            // تحويل Set إلى Array للتخزين
             const statsToSave = {
                 totalVisits: userStats.totalVisits,
                 uniqueUsers: Array.from(userStats.uniqueUsers),
@@ -1849,7 +1684,6 @@
     // إعداد مستمعي الأحداث
     function setupEventListeners() {
         try {
-            // اختيار الصف الدراسي
             elements.yearCards.forEach(card => {
                 card.addEventListener('click', function() {
                     try {
@@ -1872,19 +1706,11 @@
                 });
             });
             
-            // الانتقال إلى السؤال التالي
             elements.nextBtn.addEventListener('click', nextQuestion);
-            
-            // العودة إلى السؤال السابق
             elements.prevBtn.addEventListener('click', prevQuestion);
-            
-            // إرسال الاختبار
             elements.submitBtn.addEventListener('click', submitQuiz);
-            
-            // إعادة الاختبار
             elements.restartBtn.addEventListener('click', restartQuiz);
             
-            // تصفية الإختبارات حسب التصنيف
             elements.categorySelect.addEventListener('change', function() {
                 try {
                     filterQuestionsByCategory(this.value);
@@ -1893,14 +1719,12 @@
                 }
             });
             
-            // إغلاق الإعلان
             if (elements.adClose) {
                 elements.adClose.addEventListener('click', function() {
                     elements.adContainer.style.display = 'none';
                 });
             }
             
-            // فتح رابط الإعلان
             if (elements.adAction) {
                 elements.adAction.addEventListener('click', function() {
                     try {
@@ -1924,7 +1748,6 @@
             console.log('تحميل الأقسام للصف:', year);
             console.log('الأقسام المتاحة:', sections);
             
-            // تصفية الأقسام التي تنتمي للصف المختار
             const yearSections = sections.filter(section => 
                 section.grades && section.grades.includes(year)
             );
@@ -1941,7 +1764,6 @@
                     }
                     sectionCard.dataset.section = section.id;
                     
-                    // إضافة زر المشاركة على القسم نفسه
                     sectionCard.innerHTML = `
                         <div class="section-share-btn" data-section-id="${section.id}" data-section-name="${section.name}">
                             <i class="fas fa-share-alt"></i>
@@ -1953,9 +1775,7 @@
                     
                     elements.sectionContainer.appendChild(sectionCard);
                     
-                    // إضافة حدث النقر على بطاقة القسم (لاختيار القسم)
                     sectionCard.addEventListener('click', function(e) {
-                        // منع الحدث إذا تم النقر على زر المشاركة
                         if (e.target.closest('.section-share-btn')) return;
                         
                         try {
@@ -1977,7 +1797,6 @@
                         }
                     });
                     
-                    // إضافة حدث النقر على زر المشاركة
                     const shareBtn = sectionCard.querySelector('.section-share-btn');
                     shareBtn.addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -1987,14 +1806,12 @@
                     });
                 });
                 
-                // إذا كان هناك قسم محدد من الرابط، قم بتحميل المواد تلقائياً
                 if (highlightSectionId) {
                     setTimeout(() => {
                         loadSubjectsForSection(highlightSectionId);
                     }, 500);
                 }
             } else {
-                // عرض رسالة عدم وجود أقسام
                 elements.sectionContainer.innerHTML = `
                     <div class="no-questions" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
                         <i class="fas fa-info-circle" style="font-size: 48px; color: var(--primary);"></i>
@@ -2016,7 +1833,6 @@
             console.log('تحميل المواد للقسم:', sectionId);
             console.log('المواد المتاحة:', subjects);
             
-            // تصفية المواد التي تنتمي للقسم المختار
             const sectionSubjects = subjects.filter(subject => 
                 subject.sectionId === sectionId
             );
@@ -2046,7 +1862,6 @@
                             
                             elements.quizTitle.textContent += ` - ${subjectName}`;
                             
-                            // عرض الدروس المتاحة لهذه المادة
                             loadLessonsForSubject(selectedSubject);
                             
                             saveCurrentState();
@@ -2083,7 +1898,6 @@
             elements.lessonContainer.innerHTML = '';
             console.log('تحميل الدروس للمادة:', subjectId);
             
-            // تصفية الدروس التي تنتمي للمادة المختارة
             const subjectLessons = lessons.filter(lesson => 
                 lesson.subjectId === subjectId
             );
@@ -2091,7 +1905,6 @@
             console.log('الدروس المصفاة:', subjectLessons.length);
             
             if (subjectLessons.length > 0) {
-                // فرز الدروس حسب الترتيب
                 subjectLessons.sort((a, b) => (a.order || 999) - (b.order || 999));
                 
                 subjectLessons.forEach(lesson => {
@@ -2116,7 +1929,6 @@
                             
                             elements.quizTitle.textContent += ` - ${lessonName}`;
                             
-                            // عرض الأقسام الفرعية المتاحة لهذا الدرس
                             loadSublessonsForLesson(selectedLesson);
                             
                             saveCurrentState();
@@ -2133,7 +1945,6 @@
                 elements.lessonSelectionContainer.style.display = 'block';
                 applyFogEffect(elements.lessonSelectionContainer);
             } else {
-                // إذا لم يكن هناك دروس، انتقل مباشرة إلى الاختبارات
                 console.log('لا توجد دروس، الانتقال مباشرة للاختبارات');
                 setTimeout(() => {
                     elements.subjectSelectionContainer.style.display = 'none';
@@ -2154,7 +1965,6 @@
             elements.sublessonContainer.innerHTML = '';
             console.log('تحميل الأقسام الفرعية للدرس:', lessonId);
             
-            // تصفية الأقسام الفرعية التي تنتمي للدرس المختار
             const lessonSublessons = sublessons.filter(sublesson => 
                 sublesson.lessonId === lessonId
             );
@@ -2162,7 +1972,6 @@
             console.log('الأقسام الفرعية المصفاة:', lessonSublessons.length);
             
             if (lessonSublessons.length > 0) {
-                // فرز الأقسام الفرعية حسب الترتيب
                 lessonSublessons.sort((a, b) => (a.order || 999) - (b.order || 999));
                 
                 lessonSublessons.forEach(sublesson => {
@@ -2208,7 +2017,6 @@
                 elements.sublessonSelectionContainer.style.display = 'block';
                 applyFogEffect(elements.sublessonSelectionContainer);
             } else {
-                // إذا لم يكن هناك أقسام فرعية، انتقل مباشرة إلى الاختبارات
                 console.log('لا توجد أقسام فرعية، الانتقال مباشرة للاختبارات');
                 setTimeout(() => {
                     elements.lessonSelectionContainer.style.display = 'none';
@@ -2251,19 +2059,11 @@
                 
                 console.log('إجمالي الأسئلة في Firebase:', allQuestions.length);
                 
-                // تصفية الأسئلة بناءً على المعايير المحددة
                 questions = allQuestions.filter(q => {
-                    // التحقق من الصف والقسم (إلزاميان)
                     const yearMatch = q.year === selectedYear;
                     const sectionMatch = q.section === selectedSection;
-                    
-                    // التحقق من المواد (إذا تم اختيار مادة)
                     const subjectMatch = !selectedSubject || q.subject === selectedSubject || !q.subject;
-                    
-                    // التحقق من الدروس (إذا تم اختيار درس)
                     const lessonMatch = !selectedLesson || q.lesson === selectedLesson || !q.lesson;
-                    
-                    // التحقق من الأقسام الفرعية (إذا تم اختيار قسم فرعي)
                     const sublessonMatch = !selectedSublesson || q.sublesson === selectedSublesson || !q.sublesson;
                     
                     const matches = yearMatch && sectionMatch && subjectMatch && lessonMatch && sublessonMatch;
@@ -2446,7 +2246,6 @@
             questionHTML += `</div>`;
             elements.questionContainer.innerHTML = questionHTML;
             
-            // إضافة مستمعين للأحداث للخيارات
             if (question.type === 'mcq') {
                 const options = document.querySelectorAll('.option');
                 options.forEach(option => {
@@ -2467,7 +2266,6 @@
                 });
             }
             
-            // تحديث حالة الأزرار
             elements.prevBtn.disabled = currentQuestionIndex === 0;
             elements.nextBtn.style.display = currentQuestionIndex < questions.length - 1 ? 'flex' : 'none';
             elements.submitBtn.style.display = currentQuestionIndex === questions.length - 1 ? 'flex' : 'none';
@@ -2558,14 +2356,11 @@
             }
             elements.percentageDisplay.innerHTML += ` ${medal}`;
             
-            // حساب الوقت المستغرق
             const timeTaken = calculateTimeTaken();
             elements.timeTakenDisplay.textContent = timeTaken;
             elements.feedbackDisplay.innerHTML = feedbackHTML;
             
             saveQuizResult(score, questions.length, timeTaken);
-            
-            // تسجيل نشاط إجراء اختبار
             trackQuizCompletion(score, percentage, timeTaken);
             
             console.log('تم عرض النتائج: الدرجة', score, 'من', questions.length);
@@ -2593,10 +2388,8 @@
                 sublesson: selectedSublesson
             };
             
-            // تسجيل النشاط
             userStats.userActivities.push(quizSession);
             
-            // تحديد المستخدمين الدائمين (الذين أكملوا أكثر من 3 اختبارات)
             const userQuizCount = userStats.userActivities.filter(a => 
                 a.userId === userId && a.action === 'quiz_complete'
             ).length;
@@ -2605,15 +2398,11 @@
                 userStats.permanentUsers.add(userId);
             }
             
-            // الاحتفاظ بآخر 100 نشاط فقط
             if (userStats.userActivities.length > 100) {
                 userStats.userActivities = userStats.userActivities.slice(-100);
             }
             
-            // حفظ الإحصائيات
             saveUserStats();
-            
-            // تحديث Firebase
             saveUserActivityToFirebase(quizSession);
         } catch (error) {
             console.error('خطأ في تتبع إكمال الاختبار:', error);
@@ -2805,7 +2594,6 @@
     // تحميل الإعلان
     function loadAd() {
         try {
-            // محاولة تحميل الإعلان من Firebase أولاً
             const adsRef = database.ref('ads');
             adsRef.once('value', (snapshot) => {
                 if (snapshot.exists()) {
@@ -2818,7 +2606,6 @@
                     }
                 }
                 
-                // إذا لم يكن هناك إعلان في Firebase، تحقق من التخزين المحلي
                 if (currentAd && currentAd.status === 'active') {
                     displayAd(currentAd);
                 }
