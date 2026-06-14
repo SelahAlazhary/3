@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -279,6 +280,13 @@
         .timer {
             display: none !important;
         }
+
+        /* تم إخفاء الصفوف الدراسية */
+        #year-selection-container {
+            display: none !important;
+        }
+
+        /* قوائم الاختيار محكومة بـ JavaScript - لا يتم إخفاء جميعها بشكل دائم */
 
         .progress-container {
             width: 100%;
@@ -668,237 +676,115 @@
             padding-bottom: 0;
         }
 
-        /* Loading Overlay */
+        /* ============================================ */
+        /* تصميم الـ Splash الجديد - خلفية بيضاء + لوجو يدور في المنتصف */
+        /* ============================================ */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ffffff; /* خلفية بيضاء */
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 3000;
-            color: white;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             overflow: hidden;
         }
 
-        .scientific-loader {
-            width: 200px;
-            height: 200px;
-            position: relative;
-            margin-bottom: 40px;
-        }
-
-        .atom-core {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            background: radial-gradient(circle, #4cc9f0 0%, #4361ee 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 30px rgba(76, 201, 240, 0.5);
-            animation: pulseCore 2s infinite;
-        }
-
-        .electron-orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 2px dashed rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-        }
-
-        .electron-orbit:nth-child(1) {
+        /* اللوجو الدوار */
+        .rotating-logo {
             width: 120px;
             height: 120px;
-        }
-
-        .electron-orbit:nth-child(2) {
-            width: 160px;
-            height: 160px;
-            transform: translate(-50%, -50%) rotate(45deg);
-        }
-
-        .electron-orbit:nth-child(3) {
-            width: 80px;
-            height: 80px;
-            transform: translate(-50%, -50%) rotate(30deg);
-        }
-
-        .electron {
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: radial-gradient(circle, #f8961e 0%, #f9c74f 100%);
             border-radius: 50%;
-            box-shadow: 0 0 15px rgba(248, 150, 30, 0.8);
+            object-fit: cover;
+            animation: rotateLogo 1.5s linear infinite;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .electron-orbit:nth-child(1) .electron {
-            top: -8px;
-            left: 50%;
-            margin-left: -8px;
-            animation: orbit1 3s linear infinite;
+        /* حركة الدوران المستمرة */
+        @keyframes rotateLogo {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
-        .electron-orbit:nth-child(2) .electron {
-            top: -8px;
-            right: 50%;
-            margin-right: -8px;
-            animation: orbit2 2.5s linear infinite;
-        }
-
-        .electron-orbit:nth-child(3) .electron {
-            bottom: -8px;
-            left: 50%;
-            margin-left: -8px;
-            animation: orbit3 4s linear infinite;
-        }
-
-        .loading-text {
+        /* النص أسفل اللوجو */
+        .loading-text-splash {
+            margin-top: 30px;
             font-size: 1.2rem;
-            margin-bottom: 15px;
+            color: #4361ee;
             font-weight: 600;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .loading-subtext {
-            font-size: 1rem;
-            opacity: 0.8;
             text-align: center;
-            max-width: 300px;
-            line-height: 1.5;
         }
 
-        .loading-dots {
+        .loading-subtext-splash {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-align: center;
+        }
+
+        .loading-dots-splash {
             display: inline-block;
             width: 20px;
             text-align: left;
         }
 
-        .loading-dots::after {
+        .loading-dots-splash::after {
             content: '';
-            animation: dots 1.5s infinite;
+            animation: dotsSplash 1.5s infinite;
         }
 
-        @keyframes pulseCore {
-            0%, 100% {
-                transform: translate(-50%, -50%) scale(1);
-                box-shadow: 0 0 30px rgba(76, 201, 240, 0.5);
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.1);
-                box-shadow: 0 0 50px rgba(76, 201, 240, 0.8);
-            }
-        }
-
-        @keyframes orbit1 {
-            0% {
-                transform: rotate(0deg) translate(60px) rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg) translate(60px) rotate(-360deg);
-            }
-        }
-
-        @keyframes orbit2 {
-            0% {
-                transform: rotate(0deg) translate(80px) rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg) translate(80px) rotate(-360deg);
-            }
-        }
-
-        @keyframes orbit3 {
-            0% {
-                transform: rotate(0deg) translate(40px) rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg) translate(40px) rotate(-360deg);
-            }
-        }
-
-        @keyframes dots {
+        @keyframes dotsSplash {
             0%, 20% { content: '.'; }
             40% { content: '..'; }
             60%, 100% { content: '...'; }
         }
 
-        /* Secure Badge */
-        .secure-badge {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: var(--gradient-success);
-            color: white;
-            padding: 10px 16px;
-            border-radius: 30px;
-            font-size: 13px;
+        /* Responsive للـ Splash */
+        @media (max-width: 768px) {
+            .rotating-logo {
+                width: 90px;
+                height: 90px;
+            }
+            .loading-text-splash {
+                font-size: 1rem;
+            }
+            .loading-subtext-splash {
+                font-size: 0.8rem;
+            }
+        }
+        /* ============================================ */
+
+        /* Title with Logo Style */
+        .title-with-logo {
             display: flex;
             align-items: center;
-            gap: 8px;
-            z-index: 100;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
+            gap: 12px;
+            margin-bottom: 20px;
         }
-
-        .secure-badge:hover {
-            transform: translateY(-3px);
-            background: var(--success-light);
-        }
-
-        /* Ad Container Styles */
-        .ad-container {
-            background: var(--gradient-warning);
-            color: white;
-            border-radius: var(--radius);
-            padding: 20px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ad-container h3 {
-            margin-bottom: 12px;
-            font-size: 1.2rem;
-        }
-
-        .ad-container p {
-            margin-bottom: 16px;
-            line-height: 1.5;
-        }
-
-        .ad-close {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 30px;
-            height: 30px;
+        
+        .title-with-logo img {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
+            object-fit: cover;
         }
-
-        .ad-close:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(90deg);
+        
+        .title-with-logo h2 {
+            margin: 0;
+            font-size: 1.6rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
         }
 
         /* Medal Styles */
@@ -994,6 +880,15 @@
             .section-share-btn i {
                 font-size: 16px;
             }
+            
+            .title-with-logo img {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .title-with-logo h2 {
+                font-size: 1.2rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1004,6 +899,11 @@
             .section-share-btn {
                 width: 32px;
                 height: 32px;
+            }
+            
+            .title-with-logo img {
+                width: 28px;
+                height: 28px;
             }
         }
 
@@ -1029,6 +929,26 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--primary);
         }
+
+        .social-icons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            padding: 20px 0 10px;
+        }
+        .icon {
+            font-size: 40px;
+            text-decoration: none;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        .icon:hover {
+            transform: scale(1.2);
+            opacity: 0.8;
+        }
+        .whatsapp { color: #25D366; }
+        .facebook { color: #1877F2; }
+        .youtube { color: #FF0000; }
+        .telegram { color: #0088cc; }
     </style>
 </head>
 <body>
@@ -1051,30 +971,43 @@
         </div>
         
         <div id="section-selection-container" class="card" style="display: none;">
-            <h2 class="text-center mb-3">اختر القسم</h2>
+            <div class="title-with-logo">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdyuIMWOk4qbKO_qCaKOHo859JMs3To_OJjpQ8u5fU0ULewA-AdNp7Izuv9PUOIOTGTUsNM6DTVVbRWKe2OEDTBcHnxOnOrCylsq_V3YhUFPqTkPJ7XOuzWzbCXKW-UnoLEwqsE8XjaHiWPZu2dC_pESia4uQOATzelupKDAUbuO1_jH2003wsgUO0PPiO/s1080/Selah%20Elazhary%20Transperant%20logo.png" alt="شعار سلاح الأزهري">
+                <h2>اختر القسم</h2>
+            </div>
             <div class="section-grid" id="section-container">
                
             </div>
         </div>
         
         <div id="subject-selection-container" class="card" style="display: none;">
-            <h2 class="text-center mb-3">اختر المادة الدراسية</h2>
+            <div class="title-with-logo" id="subject-title-container">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdyuIMWOk4qbKO_qCaKOHo859JMs3To_OJjpQ8u5fU0ULewA-AdNp7Izuv9PUOIOTGTUsNM6DTVVbRWKe2OEDTBcHnxOnOrCylsq_V3YhUFPqTkPJ7XOuzWzbCXKW-UnoLEwqsE8XjaHiWPZu2dC_pESia4uQOATzelupKDAUbuO1_jH2003wsgUO0PPiO/s1080/Selah%20Elazhary%20Transperant%20logo.png" alt="شعار سلاح الأزهري">
+                <div>
+                    <h2 id="subject-selection-title">اختر المادة الدراسية</h2>
+                    <p id="subject-grade-display" style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;"></p>
+                </div>
+            </div>
             <div class="section-grid" id="subject-container">
             
             </div>
         </div>
         
-        <!-- Container for Lesson Selection -->
         <div id="lesson-selection-container" class="card" style="display: none;">
-            <h2 class="text-center mb-3">اختر الدرس</h2>
+            <div class="title-with-logo" id="lesson-title-container">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdyuIMWOk4qbKO_qCaKOHo859JMs3To_OJjpQ8u5fU0ULewA-AdNp7Izuv9PUOIOTGTUsNM6DTVVbRWKe2OEDTBcHnxOnOrCylsq_V3YhUFPqTkPJ7XOuzWzbCXKW-UnoLEwqsE8XjaHiWPZu2dC_pESia4uQOATzelupKDAUbuO1_jH2003wsgUO0PPiO/s1080/Selah%20Elazhary%20Transperant%20logo.png" alt="شعار سلاح الأزهري">
+                <h2 id="lesson-selection-title">اختر الدرس</h2>
+            </div>
             <div class="lesson-grid" id="lesson-container">
             
             </div>
         </div>
 
-        <!-- Container for Sublesson Selection -->
         <div id="sublesson-selection-container" class="card" style="display: none;">
-            <h2 class="text-center mb-3">اختر القسم الفرعي</h2>
+            <div class="title-with-logo" id="sublesson-title-container">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdyuIMWOk4qbKO_qCaKOHo859JMs3To_OJjpQ8u5fU0ULewA-AdNp7Izuv9PUOIOTGTUsNM6DTVVbRWKe2OEDTBcHnxOnOrCylsq_V3YhUFPqTkPJ7XOuzWzbCXKW-UnoLEwqsE8XjaHiWPZu2dC_pESia4uQOATzelupKDAUbuO1_jH2003wsgUO0PPiO/s1080/Selah%20Elazhary%20Transperant%20logo.png" alt="شعار سلاح الأزهري">
+                <h2 id="sublesson-selection-title">اختر القسم الفرعي</h2>
+            </div>
             <div class="sublesson-grid" id="sublesson-container">
            
             </div>
@@ -1082,20 +1015,10 @@
         
         <div class="quiz-container" id="quiz-container" style="display: none;">
             <div class="loading-overlay" id="quiz-loading">
-                <div class="scientific-loader">
-                    <div class="atom-core"></div>
-                    <div class="electron-orbit">
-                        <div class="electron"></div>
-                    </div>
-                    <div class="electron-orbit">
-                        <div class="electron"></div>
-                    </div>
-                    <div class="electron-orbit">
-                        <div class="electron"></div>
-                    </div>
-                </div>
-                <div class="loading-text">جاري تحميل الإختبارات<span class="loading-dots"></span></div>
-                <div class="loading-subtext">نظام إختبارات سلاح الأزهري - التعليم الذكي</div>
+                <!-- تصميم Splash جديد: لوجو يدور في المنتصف وخلفية بيضاء -->
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdyuIMWOk4qbKO_qCaKOHo859JMs3To_OJjpQ8u5fU0ULewA-AdNp7Izuv9PUOIOTGTUsNM6DTVVbRWKe2OEDTBcHnxOnOrCylsq_V3YhUFPqTkPJ7XOuzWzbCXKW-UnoLEwqsE8XjaHiWPZu2dC_pESia4uQOATzelupKDAUbuO1_jH2003wsgUO0PPiO/s1080/Selah%20Elazhary%20Transperant%20logo.png" alt="شعار سلاح الأزهري" class="rotating-logo">
+                <div class="loading-text-splash">جاري تحميل اختبارات <span id="splash-subject-name"></span><span class="loading-dots-splash"></span></div>
+                <div class="loading-subtext-splash" id="splash-grade-info">نظام إختبارات سلاح الأزهري - التعليم الذكي</div>
             </div>
             
             <div class="quiz-header">
@@ -1134,6 +1057,14 @@
         </div>
         
         <div class="results-container" id="results-container">
+            <h2>تابعنا للإ طلاع علي كل جديد</h2>
+            <div class="social-icons">
+                <a href="https://wa.me/رقمك" target="_blank" class="icon whatsapp"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://www.facebook.com/share/1EvrxveXPn/" target="_blank" class="icon facebook"><i class="fab fa-facebook"></i></a>
+                <a href="https://youtube.com/@selahalazhary?si=XU1yeb9L40NZr9p8" target="_blank" class="icon youtube"><i class="fab fa-youtube"></i></a>
+                <a href="https://t.me/alazher2026" target="_blank" class="icon telegram"><i class="fab fa-telegram"></i></a>
+            </div>
+
             <h2>نتيجة الاختبار</h2>
             <div class="stats">
                 <div class="stat-item">
@@ -1162,7 +1093,7 @@
     </div>
     
     <div class="secure-badge">
-        <span> ElgoharyX 2027</span>
+       
     </div>
    
    
@@ -1192,6 +1123,7 @@
     let currentQuestionIndex = 0;
     let score = 0;
     let questions = [];
+    let questionsCache = [];
     let userAnswers = [];
     let clickCount = 0;
     let adminPassword = localStorage.getItem('adminPassword') || "gohary01010081147mo";
@@ -1200,6 +1132,8 @@
     let timerInterval;
     let selectedYear = '';
     let selectedSection = '';
+    let isLoadingQuestions = false; // علم لمنع تحميل الأسئلة مرات متعددة
+    let isQuizStarted = false; // علم لمنع بدء الاختبار مرات متعددة
     let selectedSubject = '';
     let selectedLesson = '';
     let selectedSublesson = '';
@@ -1214,18 +1148,59 @@
     let currentEditingQuestionId = null;
     let currentAd = JSON.parse(localStorage.getItem('currentAd')) || null;
     let autoBackupEnabled = localStorage.getItem('autoBackupEnabled') !== 'false';
-    let userStats = JSON.parse(localStorage.getItem('userStats')) || {
-        totalVisits: 0,
-        uniqueUsers: new Set(),
-        dailyActiveUsers: new Set(),
-        userSessions: [],
-        activeUsers: new Set(),
-        permanentUsers: new Set(),
-        userActivities: []
-    };
+    let userStats = (() => {
+        const saved = JSON.parse(localStorage.getItem('userStats'));
+        return saved ? {
+            totalVisits: saved.totalVisits || 0,
+            uniqueUsers: new Set(saved.uniqueUsers || []),
+            dailyActiveUsers: new Set(saved.dailyActiveUsers || []),
+            userSessions: saved.userSessions || [],
+            activeUsers: new Set(saved.activeUsers || []),
+            permanentUsers: new Set(saved.permanentUsers || []),
+            userActivities: saved.userActivities || []
+        } : {
+            totalVisits: 0,
+            uniqueUsers: new Set(),
+            dailyActiveUsers: new Set(),
+            userSessions: [],
+            activeUsers: new Set(),
+            permanentUsers: new Set(),
+            userActivities: []
+        };
+    })();
     
     // متغير Dark Mode
     let isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+    function getQuestionsCacheKey() {
+        return 'cachedQuestions_' + [selectedYear, selectedSection, selectedSubject, selectedLesson, selectedSublesson]
+            .map(value => encodeURIComponent(value || ''))
+            .join('_');
+    }
+
+    function loadCachedQuestions() {
+        try {
+            const cacheKey = getQuestionsCacheKey();
+            const cached = localStorage.getItem(cacheKey);
+            if (!cached) {
+                return null;
+            }
+            const parsed = JSON.parse(cached);
+            return Array.isArray(parsed) ? parsed : null;
+        } catch (error) {
+            console.error('خطأ في تحميل الأسئلة من التخزين المؤقت:', error);
+            return null;
+        }
+    }
+
+    function cacheQuestions(questionsToCache) {
+        try {
+            const cacheKey = getQuestionsCacheKey();
+            localStorage.setItem(cacheKey, JSON.stringify(questionsToCache));
+        } catch (error) {
+            console.error('خطأ في حفظ الأسئلة في التخزين المؤقت:', error);
+        }
+    }
 
     // عناصر DOM
     const elements = {
@@ -1267,6 +1242,9 @@
     const urlParams = new URLSearchParams(window.location.search);
     const sectionFromUrl = urlParams.get('section');
     const isFromQR = sectionFromUrl !== null;
+
+    // اللوجو - ثابت لجميع العناوين
+    const LOGO_URL = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdyuIMWOk4qbKO_qCaKOHo859JMs3To_OJjpQ8u5fU0ULewA-AdNp7Izuv9PUOIOTGTUsNM6DTVVbRWKe2OEDTBcHnxOnOrCylsq_V3YhUFPqTkPJ7XOuzWzbCXKW-UnoLEwqsE8XjaHiWPZu2dC_pESia4uQOATzelupKDAUbuO1_jH2003wsgUO0PPiO/s1080/Selah%20Elazhary%20Transperant%20logo.png";
 
     // تهيئة التطبيق
     function initApp() {
@@ -1652,6 +1630,11 @@
     // تحميل الأقسام بناءً على الصف المختار
     function loadSectionsForYear(year, highlightSectionId = null) {
         try {
+            if (!elements.sectionContainer) {
+                console.error('عنصر sectionContainer غير موجود');
+                return;
+            }
+            
             elements.sectionContainer.innerHTML = '';
             console.log('تحميل الأقسام للصف:', year);
             console.log('الأقسام المتاحة:', sections);
@@ -1700,7 +1683,8 @@
                                 const sectionName = sectionObj ? sectionObj.name : '';
                                 console.log('تم اختيار القسم (من QR):', sectionName);
                                 
-                                elements.quizTitle.textContent += ` - ${sectionName}`;
+                                const yearText = getYearText(selectedYear);
+                                elements.quizTitle.textContent = `اختبار إختبارات سلاح الأزهري - ${yearText} - ${sectionName}`;
                                 
                                 loadSubjectsForSection(selectedSection);
                                 saveCurrentState();
@@ -1746,8 +1730,24 @@
     // تحميل المواد بناءً على القسم المختار
     function loadSubjectsForSection(sectionId) {
         try {
+            if (!elements.subjectContainer) {
+                console.error('عنصر subjectContainer غير موجود');
+                return;
+            }
+            
             elements.subjectContainer.innerHTML = '';
             console.log('تحميل المواد للقسم:', sectionId);
+            
+            // تغيير النص إلى اسم القسم الأساسي
+            const subjectTitleElem = document.getElementById('subject-selection-title');
+            if (subjectTitleElem) {
+                const sectionObj = sections.find(s => s.id === sectionId);
+                if (sectionObj) {
+                    subjectTitleElem.textContent = sectionObj.name;
+                } else {
+                    subjectTitleElem.textContent = 'اختر المادة الدراسية';
+                }
+            }
             
             const sectionSubjects = subjects.filter(subject => 
                 subject.sectionId === sectionId
@@ -1776,7 +1776,16 @@
                             const subjectName = subjectObj ? subjectObj.name : '';
                             console.log('تم اختيار المادة:', subjectName);
                             
-                            elements.quizTitle.textContent += ` - ${subjectName}`;
+                            const yearText = getYearText(selectedYear);
+                            const sectionObj = sections.find(s => s.id === selectedSection);
+                            const sectionName = sectionObj ? sectionObj.name : '';
+                            elements.quizTitle.textContent = `اختبار إختبارات سلاح الأزهري - ${yearText} - ${sectionName} - ${subjectName}`;
+                            
+                            // تحديث عنوان الدرس
+                            const lessonTitleElem = document.getElementById('lesson-selection-title');
+                            if (lessonTitleElem) {
+                                lessonTitleElem.textContent = `دروس ${subjectName}`;
+                            }
                             
                             loadLessonsForSubject(selectedSubject);
                             
@@ -1792,6 +1801,7 @@
                 
                 elements.sectionSelectionContainer.style.display = 'none';
                 elements.subjectSelectionContainer.style.display = 'block';
+                updateGradeDisplay();
             } else {
                 elements.subjectContainer.innerHTML = `
                     <div class="no-questions" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
@@ -1810,8 +1820,22 @@
     // تحميل الدروس للمادة المختارة
     function loadLessonsForSubject(subjectId) {
         try {
+            if (!elements.lessonContainer) {
+                console.error('عنصر lessonContainer غير موجود');
+                return;
+            }
+            
             elements.lessonContainer.innerHTML = '';
             console.log('تحميل الدروس للمادة:', subjectId);
+            
+            const subjectObj = subjects.find(s => s.id === subjectId);
+            const subjectName = subjectObj ? subjectObj.name : '';
+            
+            // تحديث عنوان الدرس مع اسم المادة
+            const lessonTitleElem = document.getElementById('lesson-selection-title');
+            if (lessonTitleElem) {
+                lessonTitleElem.textContent = `دروس ${subjectName}`;
+            }
             
             const subjectLessons = lessons.filter(lesson => 
                 lesson.subjectId === subjectId
@@ -1842,7 +1866,18 @@
                             const lessonName = lessonObj ? lessonObj.name : '';
                             console.log('تم اختيار الدرس:', lessonName);
                             
-                            elements.quizTitle.textContent += ` - ${lessonName}`;
+                            const yearText = getYearText(selectedYear);
+                            const sectionObj = sections.find(s => s.id === selectedSection);
+                            const sectionName = sectionObj ? sectionObj.name : '';
+                            const subjectObj = subjects.find(s => s.id === selectedSubject);
+                            const subjectName = subjectObj ? subjectObj.name : '';
+                            elements.quizTitle.textContent = `اختبار إختبارات سلاح الأزهري - ${yearText} - ${sectionName} - ${subjectName} - ${lessonName}`;
+                            
+                            // تحديث عنوان القسم الفرعي
+                            const sublessonTitleElem = document.getElementById('sublesson-selection-title');
+                            if (sublessonTitleElem) {
+                                sublessonTitleElem.textContent = `أقسام ${lessonName}`;
+                            }
                             
                             loadSublessonsForLesson(selectedLesson);
                             
@@ -1875,8 +1910,22 @@
     // تحميل الأقسام الفرعية للدرس المختار
     function loadSublessonsForLesson(lessonId) {
         try {
+            if (!elements.sublessonContainer) {
+                console.error('عنصر sublessonContainer غير موجود');
+                return;
+            }
+            
             elements.sublessonContainer.innerHTML = '';
             console.log('تحميل الأقسام الفرعية للدرس:', lessonId);
+            
+            const lessonObj = lessons.find(l => l.id === lessonId);
+            const lessonName = lessonObj ? lessonObj.name : '';
+            
+            // تحديث عنوان القسم الفرعي
+            const sublessonTitleElem = document.getElementById('sublesson-selection-title');
+            if (sublessonTitleElem) {
+                sublessonTitleElem.textContent = `أقسام ${lessonName}`;
+            }
             
             const lessonSublessons = sublessons.filter(sublesson => 
                 sublesson.lessonId === lessonId
@@ -1907,7 +1956,14 @@
                             const sublessonName = sublessonObj ? sublessonObj.name : '';
                             console.log('تم اختيار القسم الفرعي:', sublessonName);
                             
-                            elements.quizTitle.textContent += ` - ${sublessonName}`;
+                            const yearText = getYearText(selectedYear);
+                            const sectionObj = sections.find(s => s.id === selectedSection);
+                            const sectionName = sectionObj ? sectionObj.name : '';
+                            const subjectObj = subjects.find(s => s.id === selectedSubject);
+                            const subjectName = subjectObj ? subjectObj.name : '';
+                            const lessonObj = lessons.find(l => l.id === selectedLesson);
+                            const lessonName = lessonObj ? lessonObj.name : '';
+                            elements.quizTitle.textContent = `اختبار إختبارات سلاح الأزهري - ${yearText} - ${sectionName} - ${subjectName} - ${lessonName} - ${sublessonName}`;
                             
                             setTimeout(() => {
                                 elements.sublessonSelectionContainer.style.display = 'none';
@@ -1941,12 +1997,73 @@
         }
     }
     
+    // تحديث معلومات الـ Splash Screen ديناميكياً
+    function updateSplashScreen() {
+        try {
+            const subjectObj = subjects.find(s => s.id === selectedSubject);
+            const subjectName = subjectObj ? subjectObj.name : '';
+            const yearText = getYearText(selectedYear);
+            
+            const splashSubjectName = document.getElementById('splash-subject-name');
+            const splashGradeInfo = document.getElementById('splash-grade-info');
+            
+            if (splashSubjectName) {
+                splashSubjectName.textContent = subjectName;
+            }
+            
+            if (splashGradeInfo) {
+                splashGradeInfo.textContent = `${yearText} - نظام إختبارات سلاح الأزهري`;
+            }
+        } catch (error) {
+            console.error('خطأ في تحديث الـ Splash Screen:', error);
+        }
+    }
+    
+    // تحديث اسم الفصل الدراسي في صفحة المادة
+    function updateGradeDisplay() {
+        try {
+            const gradeDisplay = document.getElementById('subject-grade-display');
+            if (gradeDisplay && selectedYear) {
+                const yearText = getYearText(selectedYear);
+                gradeDisplay.textContent = `${yearText}`;
+            }
+        } catch (error) {
+            console.error('خطأ في تحديث اسم الفصل:', error);
+        }
+    }
+    
     // تحميل الإختبارات من Firebase
     function loadQuestions() {
         try {
+            // منع تحميل الأسئلة مرات متعددة
+            if (isLoadingQuestions) {
+                console.log('الأسئلة قيد التحميل بالفعل، سيتم تجاهل الطلب الحالي');
+                return;
+            }
+
+            const cachedQuestions = loadCachedQuestions();
+            if (cachedQuestions && cachedQuestions.length > 0) {
+                console.log('تحميل الأسئلة من التخزين المحلي (offline)');
+                questions = cachedQuestions;
+                questionsCache = cachedQuestions;
+                updateCategoryFilters();
+
+                if (questions.length > 0) {
+                    startQuiz();
+                } else {
+                    showNoQuestionsMessage();
+                }
+                return;
+            }
+
+            isLoadingQuestions = true;
+
+            // تحديث الـ splash screen بمعلومات الفصل والمادة
+            updateSplashScreen();
+
             elements.quizLoading.style.display = 'flex';
             elements.questionContainer.innerHTML = '';
-            
+
             console.log('جاري تحميل الأسئلة...');
             console.log('معايير التصفية:', {
                 year: selectedYear,
@@ -1955,40 +2072,42 @@
                 lesson: selectedLesson,
                 sublesson: selectedSublesson
             });
-            
+
             const questionsRef = database.ref('questions');
             questionsRef.once('value', (snapshot) => {
                 const allQuestions = [];
                 categories = new Set(['all']);
-                
+
                 snapshot.forEach((childSnapshot) => {
                     const question = childSnapshot.val();
                     question.id = childSnapshot.key;
                     allQuestions.push(question);
                 });
-                
+
                 console.log('إجمالي الأسئلة في Firebase:', allQuestions.length);
-                
+
                 questions = allQuestions.filter(q => {
                     const yearMatch = q.year === selectedYear;
                     const sectionMatch = q.section === selectedSection;
                     const subjectMatch = !selectedSubject || q.subject === selectedSubject || !q.subject;
                     const lessonMatch = !selectedLesson || q.lesson === selectedLesson || !q.lesson;
                     const sublessonMatch = !selectedSublesson || q.sublesson === selectedSublesson || !q.sublesson;
-                    
+
                     const matches = yearMatch && sectionMatch && subjectMatch && lessonMatch && sublessonMatch;
-                    
+
                     if (matches && q.category) {
                         categories.add(q.category);
                     }
-                    
+
                     return matches;
                 });
-                
+
                 console.log('الأسئلة بعد التصفية:', questions.length);
-                
+                questionsCache = questions;
+                cacheQuestions(questions);
+
                 updateCategoryFilters();
-                
+
                 if (questions.length > 0) {
                     console.log('تم العثور على أسئلة، بدء الاختبار');
                     startQuiz();
@@ -1996,65 +2115,47 @@
                     console.log('لم يتم العثور على أسئلة');
                     showNoQuestionsMessage();
                 }
-                
+
                 elements.quizLoading.style.display = 'none';
+                isLoadingQuestions = false;
             }, (error) => {
                 console.error('خطأ في تحميل الأسئلة:', error);
                 elements.quizLoading.style.display = 'none';
                 showError('حدث خطأ في تحميل الأسئلة: ' + error.message);
+                isLoadingQuestions = false;
             });
         } catch (error) {
             console.error('خطأ في دالة تحميل الأسئلة:', error);
             elements.quizLoading.style.display = 'none';
             showError('حدث خطأ في تحميل الأسئلة');
+            isLoadingQuestions = false;
         }
     }
-    
+
     // تصفية الإختبارات حسب التصنيف
     function filterQuestionsByCategory(selectedCategory) {
         try {
-            if (selectedCategory === 'all') {
+            if (!questionsCache || questionsCache.length === 0) {
                 loadQuestions();
                 return;
             }
-            
-            elements.quizLoading.style.display = 'flex';
-            elements.questionContainer.innerHTML = '';
-            
-            const questionsRef = database.ref('questions');
-            questionsRef.once('value', (snapshot) => {
-                const allQuestions = [];
-                snapshot.forEach((childSnapshot) => {
-                    const question = childSnapshot.val();
-                    question.id = childSnapshot.key;
-                    
-                    if (question.year === selectedYear && 
-                        question.section === selectedSection && 
-                        (!selectedSubject || question.subject === selectedSubject) &&
-                        (!selectedLesson || question.lesson === selectedLesson) &&
-                        (!selectedSublesson || question.sublesson === selectedSublesson) &&
-                        question.category === selectedCategory) {
-                        allQuestions.push(question);
-                    }
-                });
-                
-                if (allQuestions.length > 0) {
-                    questions = allQuestions;
-                    currentQuestionIndex = 0;
-                    score = 0;
-                    userAnswers = Array(questions.length).fill(null);
-                    showQuestion();
-                    updateProgressBar();
-                } else {
-                    showNoQuestionsMessage();
-                }
-                
-                elements.quizLoading.style.display = 'none';
-            }, (error) => {
-                console.error('خطأ في تصفية الأسئلة:', error);
-                elements.quizLoading.style.display = 'none';
-                showError('حدث خطأ في تصفية الأسئلة');
-            });
+
+            if (selectedCategory === 'all') {
+                questions = questionsCache.slice();
+            } else {
+                questions = questionsCache.filter(question => question.category === selectedCategory);
+            }
+
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = Array(questions.length).fill(null);
+            updateProgressBar();
+
+            if (questions.length > 0) {
+                showQuestion();
+            } else {
+                showNoQuestionsMessage();
+            }
         } catch (error) {
             console.error('خطأ في تصفية الأسئلة:', error);
             elements.quizLoading.style.display = 'none';
@@ -2082,6 +2183,13 @@
     // بدء الاختبار
     function startQuiz() {
         try {
+            // منع بدء الاختبار مرات متعددة
+            if (isQuizStarted) {
+                console.log('الاختبار قيد البدء بالفعل، سيتم تجاهل الطلب الحالي');
+                return;
+            }
+            
+            isQuizStarted = true;
             currentQuestionIndex = 0;
             score = 0;
             userAnswers = Array(questions.length).fill(null);
@@ -2094,6 +2202,7 @@
         } catch (error) {
             console.error('خطأ في بدء الاختبار:', error);
             showError('حدث خطأ في بدء الاختبار');
+            isQuizStarted = false;
         }
     }
     
@@ -2393,6 +2502,7 @@
     // إعادة الاختبار
     function restartQuiz() {
         try {
+            isQuizStarted = false; // إعادة تعيين العلم لبدء اختبار جديد
             elements.quizContainer.style.display = 'block';
             elements.resultsContainer.style.display = 'none';
             currentQuestionIndex = 0;
@@ -2555,39 +2665,70 @@
     
     // عرض الصفوف للمستخدم العادي
     function displayYears() {
-        elements.yearSelectionContainer.innerHTML = `
-
-        `;
-        
-        document.querySelectorAll('.year-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                const year = card.dataset.year;
-                selectedYear = year;
+        try {
+            const years = [
+                { id: 'secondary1', name: 'الصف الأول الثانوي', icon: 'fas fa-book', description: 'اختبارات الصف الأول الثانوي' },
+                { id: 'secondary2', name: 'الصف الثاني الثانوي', icon: 'fas fa-book-reader', description: 'اختبارات الصف الثاني الثانوي' },
+                { id: 'secondary3', name: 'الصف الثالث الثانوي', icon: 'fas fa-graduation-cap', description: 'اختبارات الصف الثالث الثانوي' }
+            ];
+            
+            elements.yearSelectionContainer.innerHTML = '';
+            
+            years.forEach(year => {
+                const yearCard = document.createElement('div');
+                yearCard.className = 'year-card';
+                yearCard.dataset.year = year.id;
+                yearCard.innerHTML = `
+                    <i class="${year.icon}"></i>
+                    <h3>${year.name}</h3>
+                    <p>${year.description}</p>
+                `;
                 
-                elements.yearSelectionContainer.style.display = 'none';
-                elements.sectionSelectionContainer.style.display = 'block';
+                yearCard.addEventListener('click', function() {
+                    try {
+                        selectedYear = this.dataset.year;
+                        elements.yearSelectionContainer.style.display = 'none';
+                        elements.sectionSelectionContainer.style.display = 'block';
+                        
+                        const yearText = getYearText(selectedYear);
+                        elements.quizTitle.textContent = `اختبار إختبارات سلاح الأزهري - ${yearText}`;
+                        
+                        loadSectionsForYear(selectedYear);
+                        saveCurrentState();
+                    } catch (error) {
+                        console.error('خطأ في اختيار السنة:', error);
+                        showError('حدث خطأ في اختيار السنة');
+                    }
+                });
                 
-                const yearText = getYearText(selectedYear);
-                elements.quizTitle.textContent = `اختبار إختبارات سلاح الأزهري - ${yearText}`;
-                
-                loadSectionsForYear(selectedYear);
-                saveCurrentState();
+                elements.yearSelectionContainer.appendChild(yearCard);
             });
-        });
+        } catch (error) {
+            console.error('خطأ في عرض السنوات:', error);
+            showError('حدث خطأ في عرض السنوات');
+        }
     }
     
     // بدء التطبيق
     document.addEventListener('DOMContentLoaded', () => {
-        if (isFromQR) {
-            // لو جاي من QR كود، نبدأ التطبيق عادي وهيتعامل مع الرابط
-            initApp();
-        } else {
-            // لو مستخدم عادي، نعرض الصفوف أولاً
-            loadSections();
-            setTimeout(() => {
-                displayYears();
-            }, 500);
-            initApp();
+        try {
+            if (isFromQR) {
+                console.log('تطبيق بدء من رابط QR');
+                initApp();
+            } else {
+                console.log('تطبيق بدء عادي - عرض السنوات');
+                loadSections();
+                loadSubjects();
+                loadLessons();
+                loadSublessons();
+                setTimeout(() => {
+                    displayYears();
+                }, 500);
+                initApp();
+            }
+        } catch (error) {
+            console.error('خطأ في تهيئة التطبيق:', error);
+            showError('حدث خطأ في بدء التطبيق');
         }
     });
 </script>
