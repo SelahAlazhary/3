@@ -557,6 +557,7 @@ function loadSectionsForYear(year, highlightSectionId = null) {
                 sectionCard.dataset.section = section.id;
 
                 sectionCard.innerHTML = `
+                    ${section.maintenance ? '<span class="maint-badge"><i class="fas fa-tools"></i> تحت الصيانة</span>' : ''}
                     <div class="section-share-btn" data-section-id="${section.id}" data-section-name="${section.name}">
                         <i class="fas fa-share-alt"></i>
                     </div>
@@ -568,10 +569,15 @@ function loadSectionsForYear(year, highlightSectionId = null) {
                 elements.sectionContainer.appendChild(sectionCard);
 
                 // عند الضغط على القسم - يفتح في صفحة جديدة (للمستخدم العادي)
+                if (section.maintenance) sectionCard.classList.add('card-maint');
+
                 sectionCard.addEventListener('click', function(e) {
                     if (e.target.closest('.section-share-btn')) return;
 
                     try {
+                        const secMaint = maintenanceInfo('section', this.dataset.section);
+                        if (secMaint.blocked) { notifyMaintenance(secMaint); return; }
+
                         // التحقق: إذا كان المستخدم جاي من QR Code، يفتح في نفس الصفحة
                         // وإلا يفتح في صفحة جديدة
                         if (isFromQR) {
@@ -661,7 +667,9 @@ function loadSubjectsForSection(sectionId) {
                 const subjectCard = document.createElement('div');
                 subjectCard.className = 'subject-card';
                 subjectCard.dataset.subject = subject.id;
+                if (subject.maintenance) subjectCard.classList.add('card-maint');
                 subjectCard.innerHTML = `
+                    ${subject.maintenance ? '<span class="maint-badge"><i class="fas fa-tools"></i> تحت الصيانة</span>' : ''}
                     <i class="fas ${subject.icon || 'fa-book'}"></i>
                     <h3>${subject.name}</h3>
                     <p>${subject.description || ''}</p>
@@ -669,6 +677,7 @@ function loadSubjectsForSection(sectionId) {
 
                 subjectCard.addEventListener('click', function() {
                     try {
+                        if (subject.maintenance) { notifyMaintenance(maintenanceInfo('subject', subject.id)); return; }
                         document.querySelectorAll('.subject-card').forEach(c => c.classList.remove('selected'));
                         this.classList.add('selected');
                         selectedSubject = this.dataset.subject;
@@ -751,7 +760,9 @@ function loadLessonsForSubject(subjectId) {
                 const lessonCard = document.createElement('div');
                 lessonCard.className = 'lesson-card';
                 lessonCard.dataset.lesson = lesson.id;
+                if (lesson.maintenance) lessonCard.classList.add('card-maint');
                 lessonCard.innerHTML = `
+                    ${lesson.maintenance ? '<span class="maint-badge"><i class="fas fa-tools"></i> تحت الصيانة</span>' : ''}
                     <i class="fas ${lesson.icon || 'fa-book-open'}"></i>
                     <h3>${lesson.name}</h3>
                     <p>${lesson.description || ''}</p>
@@ -759,6 +770,7 @@ function loadLessonsForSubject(subjectId) {
 
                 lessonCard.addEventListener('click', function() {
                     try {
+                        if (lesson.maintenance) { notifyMaintenance(maintenanceInfo('lesson', lesson.id)); return; }
                         document.querySelectorAll('.lesson-card').forEach(c => c.classList.remove('selected'));
                         this.classList.add('selected');
                         selectedLesson = this.dataset.lesson;
@@ -841,7 +853,9 @@ function loadSublessonsForLesson(lessonId) {
                 const sublessonCard = document.createElement('div');
                 sublessonCard.className = 'sublesson-card';
                 sublessonCard.dataset.sublesson = sublesson.id;
+                if (sublesson.maintenance) sublessonCard.classList.add('card-maint');
                 sublessonCard.innerHTML = `
+                    ${sublesson.maintenance ? '<span class="maint-badge"><i class="fas fa-tools"></i> تحت الصيانة</span>' : ''}
                     <i class="fas ${sublesson.icon || 'fa-folder'}"></i>
                     <h3>${sublesson.name}</h3>
                     <p>${sublesson.description || ''}</p>
@@ -849,6 +863,7 @@ function loadSublessonsForLesson(lessonId) {
 
                 sublessonCard.addEventListener('click', function() {
                     try {
+                        if (sublesson.maintenance) { notifyMaintenance(maintenanceInfo('sublesson', sublesson.id)); return; }
                         document.querySelectorAll('.sublesson-card').forEach(c => c.classList.remove('selected'));
                         this.classList.add('selected');
                         selectedSublesson = this.dataset.sublesson;
@@ -1439,6 +1454,85 @@ function getYearText(year) {
     }
 }
 
+// ===== وضع الصيانة: التحقق من تعطيل قسم / مادة / درس / قسم فرعي =====
+// يتحقق من العنصر نفسه ومن كل العناصر الأعلى منه (فتعطيل القسم يعطّل موادّه ودروسه تلقائياً)
+function maintenanceInfo(type, id) {
+    try {
+        if (!id) return { blocked: false };
+        if (type === 'section') {
+            const s = sections.find(x => x.id === id);
+            if (!s) return { blocked: false };
+            if (s.maintenance) return { blocked: true, msg: s.maintenanceMsg, name: s.name };
+            return { blocked: false };
+        }
+        if (type === 'subject') {
+            const sub = subjects.find(x => x.id === id);
+            if (!sub) return { blocked: false };
+            if (sub.maintenance) return { blocked: true, msg: sub.maintenanceMsg, name: sub.name };
+            return maintenanceInfo('section', sub.sectionId);
+        }
+        if (type === 'lesson') {
+            const l = lessons.find(x => x.id === id);
+            if (!l) return { blocked: false };
+            if (l.maintenance) return { blocked: true, msg: l.maintenanceMsg, name: l.name };
+            return maintenanceInfo('subject', l.subjectId);
+        }
+        if (type === 'sublesson') {
+            const sl = sublessons.find(x => x.id === id);
+            if (!sl) return { blocked: false };
+            if (sl.maintenance) return { blocked: true, msg: sl.maintenanceMsg, name: sl.name };
+            return maintenanceInfo('lesson', sl.lessonId);
+        }
+        return { blocked: false };
+    } catch (error) {
+        console.error('خطأ في التحقق من وضع الصيانة:', error);
+        return { blocked: false };
+    }
+}
+
+// النص الافتراضي لرسالة الصيانة (أو الرسالة المخصصة إن وُجدت)
+function maintenanceText(info) {
+    if (info && info.msg && info.msg.trim()) return info.msg;
+    return 'هذا المحتوى قيد الصيانة والتحديث مؤقتاً، برجاء المحاولة لاحقاً بإذن الله.';
+}
+
+// إشعار سريع عند الضغط على بطاقة معطّلة للصيانة
+function notifyMaintenance(info) {
+    const name = info && info.name ? info.name : 'هذا المحتوى';
+    showNotification(`${name}: ${maintenanceText(info)}`, 'info');
+}
+
+// شاشة الصيانة الكاملة (تُعرض عند فتح رابط مباشر لمحتوى معطّل)
+function showMaintenanceScreen(info) {
+    try {
+        hideAllScreens();
+        if (elements.adContainer) elements.adContainer.style.display = 'none';
+
+        const container = elements.yearSelectionContainer;
+        if (!container) return;
+        container.style.display = 'block';
+        const title = (info && info.name) ? escapeHtml(info.name) : '';
+        const msg = escapeHtml(maintenanceText(info));
+        container.innerHTML = `
+            <div class="card" style="text-align:center; padding:50px 26px;">
+                <i class="fas fa-tools" style="font-size:60px; color:var(--warning); margin-bottom:20px;"></i>
+                <h2 style="background:var(--gradient-warning); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:900; margin-bottom:14px;">قيد الصيانة مؤقتاً</h2>
+                ${title ? `<p style="font-weight:800; color:var(--text-primary); font-size:1.1rem; margin-bottom:10px;">${title}</p>` : ''}
+                <p style="color:var(--text-secondary); font-size:1.05rem; line-height:1.9; max-width:460px; margin:0 auto;">${msg}</p>
+                <div class="social-icons" style="margin-top:26px;">
+                    <a href="https://whatsapp.com/channel/0029Vb6rrG2LdQehV1jBg22A" target="_blank" class="icon whatsapp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.facebook.com/share/1G8r7GiToW/" target="_blank" class="icon facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://tiktok.com/@selahelazhary" target="_blank" class="icon tiktok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://youtube.com/@selahalazhary?si=XU1yeb9L40NZr9p8" target="_blank" class="icon youtube"><i class="fab fa-youtube"></i></a>
+                    <a href="https://t.me/alazher2026" target="_blank" class="icon telegram"><i class="fab fa-telegram"></i></a>
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        console.error('خطأ في عرض شاشة الصيانة:', error);
+    }
+}
+
 // عرض رسالة عدم وجود إختبارات
 function showNoQuestionsMessage() {
     try {
@@ -1625,6 +1719,14 @@ function openSubjectDirect(subjectId) {
             return;
         }
 
+        // التحقق من وضع الصيانة (للمادة أو القسم التابعة له)
+        const maint = maintenanceInfo('subject', subject.id);
+        if (maint.blocked) {
+            showMaintenanceScreen(maint);
+            if (elements.quizLoading) elements.quizLoading.style.display = 'none';
+            return;
+        }
+
         // ضبط السياق الكامل المطلوب لتصفية الأسئلة
         selectedSubject = subject.id;
         selectedSection = subject.sectionId || '';
@@ -1654,6 +1756,14 @@ function openSectionDirect(sectionId) {
         const section = sections.find(s => s.id === sectionId);
         if (!section || !section.grades || !section.grades.length) {
             showLockScreen('عذراً، القسم المطلوب غير موجود أو تم حذفه.');
+            return;
+        }
+
+        // التحقق من وضع الصيانة للقسم بالكامل
+        const maint = maintenanceInfo('section', sectionId);
+        if (maint.blocked) {
+            showMaintenanceScreen(maint);
+            if (elements.quizLoading) elements.quizLoading.style.display = 'none';
             return;
         }
 
@@ -1700,7 +1810,8 @@ function showLockScreen(message) {
                 </p>
                 <div class="social-icons" style="margin-top:26px;">
                     <a href="https://whatsapp.com/channel/0029Vb6rrG2LdQehV1jBg22A" target="_blank" class="icon whatsapp"><i class="fab fa-whatsapp"></i></a>
-                    <a href="https://www.facebook.com/share/1EvrxveXPn/" target="_blank" class="icon facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.facebook.com/share/1G8r7GiToW/" target="_blank" class="icon facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://tiktok.com/@selahelazhary" target="_blank" class="icon tiktok"><i class="fab fa-tiktok"></i></a>
                     <a href="https://youtube.com/@selahalazhary?si=XU1yeb9L40NZr9p8" target="_blank" class="icon youtube"><i class="fab fa-youtube"></i></a>
                     <a href="https://t.me/alazher2026" target="_blank" class="icon telegram"><i class="fab fa-telegram"></i></a>
                 </div>

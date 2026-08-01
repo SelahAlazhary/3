@@ -329,6 +329,34 @@ header, .main-header, .top-bar, .navbar {
 .section-card:hover .section-share-btn { opacity: 1; transform: scale(1); }
 .section-share-btn:hover { transform: scale(1.12) rotate(15deg); }
 
+/* ===== بطاقات تحت الصيانة ===== */
+.subject-card.card-maint, .lesson-card.card-maint, .sublesson-card.card-maint, .section-card.card-maint {
+    opacity: 0.6;
+    filter: grayscale(0.7);
+    cursor: not-allowed;
+}
+.card-maint:hover {
+    transform: none !important;
+    box-shadow: var(--shadow) !important;
+    border-color: rgba(67, 97, 238, 0.08) !important;
+}
+.card-maint::after { display: none !important; }
+.maint-badge {
+    position: absolute;
+    top: 12px; left: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--gradient-warning);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    z-index: 3;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+}
+
 /* ===== عنوان مع شعار ===== */
 .title-with-logo {
     display: flex;
@@ -841,6 +869,8 @@ header, .main-header, .top-bar, .navbar {
 .icon:hover { transform: translateY(-6px) scale(1.1); box-shadow: var(--shadow-lg); }
 .whatsapp { color: #25D366; }
 .facebook { color: #1877F2; }
+.tiktok { color: #000000; }
+[data-theme="dark"] .tiktok { color: #ffffff; }
 .youtube { color: #FF0000; }
 .telegram { color: #0088cc; }
 
