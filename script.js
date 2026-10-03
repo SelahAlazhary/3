@@ -437,6 +437,8 @@ function loadSubjects() {
                 subject.id = childSnapshot.key;
                 subjects.push(subject);
             });
+            // ترتيب المواد حسب الرقم المحدد من لوحة التحكم (بدون رقم = في الآخر)
+            subjects.sort((a, b) => (parseInt(a.order, 10) || 9999) - (parseInt(b.order, 10) || 9999));
             console.log('تم تحميل المواد:', subjects.length);
             subjectsLoaded = true;
             tryHandleDirectLink();
@@ -756,7 +758,7 @@ function loadLessonsForSubject(subjectId) {
         console.log('الدروس المصفاة:', subjectLessons.length);
 
         if (subjectLessons.length > 0) {
-            subjectLessons.sort((a, b) => (a.order || 999) - (b.order || 999));
+            subjectLessons.sort((a, b) => (parseInt(a.order, 10) || 9999) - (parseInt(b.order, 10) || 9999));
 
             subjectLessons.forEach(lesson => {
                 const lessonCard = document.createElement('div');
@@ -849,7 +851,7 @@ function loadSublessonsForLesson(lessonId) {
         console.log('الأقسام الفرعية المصفاة:', lessonSublessons.length);
 
         if (lessonSublessons.length > 0) {
-            lessonSublessons.sort((a, b) => (a.order || 999) - (b.order || 999));
+            lessonSublessons.sort((a, b) => (parseInt(a.order, 10) || 9999) - (parseInt(b.order, 10) || 9999));
 
             lessonSublessons.forEach(sublesson => {
                 const sublessonCard = document.createElement('div');
@@ -2010,6 +2012,23 @@ document.addEventListener('click', (e) => {
     wrap.dataset.filter = btn.dataset.f;
     wrap.querySelectorAll('.rs-seg button').forEach(b => b.classList.toggle('active', b === btn));
 });
+
+
+
+// ===== شاشات حصرية: لا تظهر شاشات الاختيار (الصفوف/الأقسام/المواد/الدروس) مع الاختبار أو النتيجة =====
+(function enforceExclusiveScreens() {
+    const pick = (ids) => ids.map(id => document.getElementById(id)).filter(Boolean);
+    const selection = pick(['year-selection-container', 'section-selection-container', 'subject-selection-container', 'lesson-selection-container', 'sublesson-selection-container']);
+    const running = pick(['quiz-container', 'results-container']);
+    const shown = (el) => el.style.display !== 'none' && getComputedStyle(el).display !== 'none';
+    function fix() {
+        if (!running.some(shown)) return;
+        selection.forEach(el => { if (el.style.display !== 'none') el.style.display = 'none'; });
+    }
+    const mo = new MutationObserver(fix);
+    selection.concat(running).forEach(el => mo.observe(el, { attributes: true, attributeFilter: ['style'] }));
+    fix();
+})();
 
 // ===== بحث داخل الدروس =====
 (function setupLessonSearch() {
