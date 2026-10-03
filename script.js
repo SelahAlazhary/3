@@ -1266,7 +1266,7 @@ function submitQuiz() {
 function showResults() {
     try {
         score = 0;
-        let feedbackHTML = '<h3>التصحيح:</h3><ul>';
+        const reviewItems = [];
 
         questions.forEach((question, index) => {
             const userAnswer = userAnswers[index];
@@ -1276,16 +1276,15 @@ function showResults() {
                 score++;
             }
 
-            feedbackHTML += `<li>
-                <strong>السؤال ${index + 1}:</strong> ${escapeHtml(question.text)}<br>
-                <span style="color: ${isCorrect ? 'green' : 'red'}">
-                    إجابتك: ${formatAnswer(question, userAnswer)} -
-                    ${isCorrect ? 'صحيح' : 'خطأ (الإجابة الصحيحة: ' + formatAnswer(question, question.correctAnswer) + ')'}
-                </span>
-            </li><br>`;
+            reviewItems.push({
+                ok: isCorrect,
+                q: escapeHtml(question.text),
+                mine: formatAnswer(question, userAnswer),
+                right: formatAnswer(question, question.correctAnswer)
+            });
         });
 
-        feedbackHTML += '</ul>';
+        const feedbackHTML = buildReviewHTML(reviewItems, score, questions.length);
 
         elements.quizContainer.style.display = 'none';
         elements.resultsContainer.style.display = 'block';
@@ -1307,6 +1306,7 @@ function showResults() {
         const timeTaken = calculateTimeTaken();
         elements.timeTakenDisplay.textContent = timeTaken;
         elements.feedbackDisplay.innerHTML = feedbackHTML;
+        renderResultsView(score, questions.length, percentage, timeTaken, reviewItems);
 
         saveQuizResult(score, questions.length, timeTaken);
         trackQuizCompletion(score, percentage, timeTaken);
@@ -1882,3 +1882,95 @@ document.addEventListener('DOMContentLoaded', () => {
         showError('حدث خطأ في بدء التطبيق');
     }
 });
+
+// ===== عرض شاشة النتيجة بتصميم احترافي (شكل فقط) =====
+function renderResultsView(score, total, percentage, timeTaken, reviewItems) {
+    const rc = document.getElementById('results-container');
+    if (!rc) return;
+    const wrong = total - score;
+    const level = percentage >= 90 ? 'great' : percentage >= 75 ? 'good' : percentage >= 50 ? 'ok' : 'low';
+    const titles = { great: 'أداء ممتاز', good: 'أداء جيد جدًا', ok: 'أداء جيد', low: 'تحتاج إلى مراجعة' };
+    let hero = document.getElementById('score-hero');
+    if (!hero) { hero = document.createElement('div'); hero.id = 'score-hero'; hero.className = 'score-hero'; rc.insertBefore(hero, rc.firstChild); }
+    let chips = document.getElementById('score-chips');
+    if (!chips) { chips = document.createElement('div'); chips.id = 'score-chips'; chips.className = 'score-chips'; hero.after(chips); }
+    hero.dataset.level = level;
+    hero.style.setProperty('--pct', percentage);
+    hero.innerHTML = `
+        <div class="score-ring"><div class="score-ring-inner"><b>${percentage}%</b><small dir="ltr">${score} / ${total}</small></div></div>
+        <div class="score-title">${titles[level]}</div>
+        <div class="score-sub">أجبت بشكل صحيح على ${score} من ${total} سؤالًا</div>`;
+    chips.innerHTML = `
+        <div class="score-chip ok"><i class="fas fa-check-circle"></i><b>${score}</b><span>صحيحة</span></div>
+        <div class="score-chip no"><i class="fas fa-times-circle"></i><b>${wrong}</b><span>خاطئة</span></div>
+        <div class="score-chip"><i class="fas fa-clock"></i><b>${timeTaken}</b><span>الوقت</span></div>`;
+    window.scrollTo(0, 0);
+}
+
+function buildReviewHTML(items, score, total) {
+    const rows = items.map((it, i) => `
+        <li class="review-item ${it.ok ? 'is-correct' : 'is-wrong'}">
+            <div class="review-top">
+                <span class="review-num">${i + 1}</span>
+                <span class="review-state"><i class="fas fa-${it.ok ? 'check-circle' : 'times-circle'}"></i> ${it.ok ? 'إجابة صحيحة' : 'إجابة خاطئة'}</span>
+            </div>
+            <div class="review-q">${it.q}</div>
+            <div class="review-ans"><span class="lbl">إجابتك</span><span class="val">${it.mine}</span></div>
+            ${it.ok ? '' : `<div class="review-ans right"><span class="lbl">الإجابة الصحيحة</span><span class="val">${it.right}</span></div>`}
+        </li>`).join('');
+    return `<div class="review-head"><h3>مراجعة الإجابات</h3><span class="review-count"><b class="ok">${score}</b> صحيحة · <b class="no">${total - score}</b> خاطئة</span></div><ol class="review-list">${rows}</ol>`;
+}
+
+// ===== بحث داخل الدروس =====
+(function setupLessonSearch() {
+    const container = document.getElementById('lesson-container');
+    if (!container || !container.parentElement) return;
+    const normalize = (t) => String(t || '')
+        .replace(/[ً-ْـ]/g, '')
+        .replace(/[أإآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه')
+        .toLowerCase().trim();
+
+    let box = document.getElementById('lesson-search-box');
+    if (!box) {
+        box = document.createElement('div');
+        box.id = 'lesson-search-box';
+        box.className = 'lesson-search';
+        box.innerHTML = '<i class="fas fa-search"></i><input type="search" id="lesson-search-input" placeholder="ابحث عن درس..." autocomplete="off" enterkeyhint="search" aria-label="بحث في الدروس"><button type="button" id="lesson-search-clear" aria-label="مسح البحث"><i class="fas fa-times"></i></button>';
+        container.parentElement.insertBefore(box, container);
+    }
+    const input = document.getElementById('lesson-search-input');
+    const clearBtn = document.getElementById('lesson-search-clear');
+    let empty = document.getElementById('lesson-search-empty');
+    if (!empty) {
+        empty = document.createElement('div');
+        empty.id = 'lesson-search-empty';
+        empty.className = 'lesson-search-empty';
+        empty.innerHTML = '<i class="fas fa-search"></i><span>لا توجد دروس مطابقة لبحثك</span>';
+        empty.style.display = 'none';
+        container.after(empty);
+    }
+
+    function applyFilter() {
+        const q = normalize(input.value);
+        box.classList.toggle('has-value', !!q);
+        let shown = 0;
+        const cards = container.querySelectorAll('.lesson-card');
+        cards.forEach(card => {
+            const match = !q || normalize(card.textContent).includes(q);
+            card.classList.toggle('lesson-hidden', !match);
+            if (match) shown++;
+        });
+        empty.style.display = (q && cards.length && !shown) ? 'flex' : 'none';
+    }
+    input.addEventListener('input', applyFilter);
+    clearBtn.addEventListener('click', () => { input.value = ''; applyFilter(); input.focus(); });
+
+    // عند إعادة بناء قائمة الدروس: أفرغ البحث وأظهر الصندوق فقط إذا وُجدت دروس
+    new MutationObserver(() => {
+        input.value = '';
+        box.classList.remove('has-value');
+        empty.style.display = 'none';
+        box.style.display = container.querySelector('.lesson-card') ? '' : 'none';
+    }).observe(container, { childList: true });
+    box.style.display = 'none';
+})();
