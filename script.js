@@ -1149,7 +1149,8 @@ function showQuestion() {
 
         questionHTML += `
             <div class="question">
-                <h3><span class="question-number">${currentQuestionIndex + 1}</span> ${escapeHtml(question.text)}</h3>
+                <div class="q-meta">السؤال ${currentQuestionIndex + 1} من ${questions.length}</div>
+                <h3>${escapeHtml(question.text)}</h3>
         `;
 
         if (question.type === 'mcq') {
