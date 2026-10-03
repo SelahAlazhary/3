@@ -413,6 +413,8 @@ function loadSections() {
                 section.id = childSnapshot.key;
                 sections.push(section);
             });
+            // ترتيب الأقسام حسب الرقم المحدد من لوحة التحكم (بدون رقم = في الآخر)
+            sections.sort((a, b) => (parseInt(a.order, 10) || 9999) - (parseInt(b.order, 10) || 9999));
             console.log('تم تحميل الأقسام:', sections.length);
             sectionsLoaded = true;
             tryHandleDirectLink();
