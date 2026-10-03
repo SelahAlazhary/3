@@ -1677,6 +1677,77 @@ function displayAd(ad) {
 }
 
 // ===== معالجة الرابط المباشر بعد اكتمال تحميل كل البيانات =====
+
+// ===== فتح أي مستوى من الرابط (قسم / مادة / درس / قسم فرعي) =====
+function openAnyLevelDirect(id) {
+    if (sections.some(x => x.id === id)) return openSectionDirect(id);
+    if (subjects.some(x => x.id === id)) return openSubjectDirect(id);
+    if (lessons.some(x => x.id === id)) return openLessonDirect(id);
+    if (sublessons.some(x => x.id === id)) return openSublessonDirect(id);
+    return openSectionDirect(id); // يعرض رسالة "غير موجود"
+}
+
+function applyLinkContext(subjectId, lessonId, sublessonId) {
+    const subject = subjects.find(x => x.id === subjectId) || {};
+    selectedSubject = subjectId || '';
+    selectedSection = subject.sectionId || '';
+    const sec = sections.find(x => x.id === selectedSection);
+    selectedYear = sec && sec.grades && sec.grades.length ? sec.grades[0] : '';
+    selectedLesson = lessonId || '';
+    selectedSublesson = sublessonId || '';
+}
+
+function openLessonDirect(lessonId) {
+    try {
+        const lesson = lessons.find(x => x.id === lessonId);
+        if (!lesson) { showLockScreen('عذراً، الدرس المطلوب غير موجود أو تم حذفه.'); return; }
+        const maint = maintenanceInfo('lesson', lessonId);
+        if (maint.blocked) {
+            showMaintenanceScreen(maint);
+            if (elements.quizLoading) elements.quizLoading.style.display = 'none';
+            return;
+        }
+        applyLinkContext(lesson.subjectId, lessonId, '');
+        elements.quizTitle.textContent = lesson.name || '';
+        hideAllScreens();
+        const hasSub = sublessons.some(x => x.lessonId === lessonId);
+        if (hasSub) {
+            const t = document.getElementById('sublesson-selection-title');
+            if (t) t.textContent = `أقسام ${lesson.name || ''}`;
+            loadSublessonsForLesson(lessonId);
+            if (elements.quizLoading) elements.quizLoading.style.display = 'none';
+        } else {
+            elements.quizContainer.style.display = 'block';
+            loadQuestions();
+        }
+    } catch (error) {
+        console.error('خطأ في فتح الدرس من الرابط:', error);
+        showLockScreen('حدث خطأ في فتح الدرس المطلوب.');
+    }
+}
+
+function openSublessonDirect(sublessonId) {
+    try {
+        const sub = sublessons.find(x => x.id === sublessonId);
+        if (!sub) { showLockScreen('عذراً، القسم المطلوب غير موجود أو تم حذفه.'); return; }
+        const maint = maintenanceInfo('sublesson', sublessonId);
+        if (maint.blocked) {
+            showMaintenanceScreen(maint);
+            if (elements.quizLoading) elements.quizLoading.style.display = 'none';
+            return;
+        }
+        const lesson = lessons.find(x => x.id === sub.lessonId) || {};
+        applyLinkContext(lesson.subjectId, sub.lessonId, sublessonId);
+        elements.quizTitle.textContent = sub.name || '';
+        hideAllScreens();
+        elements.quizContainer.style.display = 'block';
+        loadQuestions();
+    } catch (error) {
+        console.error('خطأ في فتح القسم الفرعي من الرابط:', error);
+        showLockScreen('حدث خطأ في فتح القسم المطلوب.');
+    }
+}
+
 function tryHandleDirectLink() {
     try {
         if (directLinkHandled) return;
@@ -1689,8 +1760,8 @@ function tryHandleDirectLink() {
             // رابط مادة مباشر -> فتح اختبار المادة فقط
             openSubjectDirect(subjectFromUrl);
         } else if (sectionFromUrl) {
-            // رابط قسم مباشر -> فتح القسم مباشرة (بدون شاشة "اختر القسم")
-            openSectionDirect(sectionFromUrl);
+            // الرابط المنسوخ من لوحة التحكم يحمل المعامل section حتى لو كان معرّف مادة أو درس أو قسم فرعي
+            openAnyLevelDirect(sectionFromUrl);
         } else {
             // لا يوجد رابط مباشر -> قفل الموقع تماماً أمام الطالب
             showLockScreen();
